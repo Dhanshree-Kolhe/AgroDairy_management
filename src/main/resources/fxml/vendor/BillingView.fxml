@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.BillingController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+   </padding>
+   <children>
+      <!-- Top Action Bar -->
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 12; -fx-background-radius: 8;">
+         <children>
+            <Label style="-fx-font-weight: bold;" text="Billing Month:" />
+            <ComboBox fx:id="monthComboBox" prefWidth="120.0" />
+            
+            <Label style="-fx-font-weight: bold;" text="Year:" />
+            <TextField fx:id="yearField" prefWidth="80.0" text="2026" />
+            
+            <Button onAction="#handleGenerateMonthlyBills" styleClass="btn-primary" text="⚡ Generate Monthly Bills" />
+            <Button onAction="#loadBillsForPeriod" styleClass="btn-secondary" text="🔍 View Bills" />
+            
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleOpenPaymentDialog" styleClass="btn-success" text="💳 Record Payment" />
+         </children>
+      </HBox>
+
+      <!-- Bills Table -->
+      <VBox style="-fx-background-color: #FFFFFF; -fx-padding: 15; -fx-background-radius: 8;" VBox.vgrow="ALWAYS">
+         <children>
+            <TableView fx:id="billsTable" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colBillNum" prefWidth="120.0" text="Bill Number" />
+                  <TableColumn fx:id="colCustName" prefWidth="150.0" text="Customer Name" />
+                  <TableColumn fx:id="colPeriod" prefWidth="90.0" text="Period" />
+                  <TableColumn fx:id="colMilkQty" prefWidth="90.0" text="Milk (L)" />
+                  <TableColumn fx:id="colMilkChg" prefWidth="100.0" text="Milk Charges" />
+                  <TableColumn fx:id="colExtraChg" prefWidth="90.0" text="Extra Chg" />
+                  <TableColumn fx:id="colNet" prefWidth="110.0" text="Net Payable (₹)" />
+                  <TableColumn fx:id="colPaid" prefWidth="100.0" text="Paid Amount" />
+                  <TableColumn fx:id="colDue" prefWidth="110.0" text="Balance Due (₹)" />
+                  <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
+               </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</VBox>

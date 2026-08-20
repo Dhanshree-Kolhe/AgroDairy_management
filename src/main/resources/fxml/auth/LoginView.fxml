@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane styleClass="login-bg" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.LoginController">
+   <children>
+      <VBox alignment="CENTER" maxWidth="450.0" spacing="20.0" styleClass="login-card">
+         <children>
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Text style="-fx-fill: #2563EB; -fx-font-size: 26px; -fx-font-weight: bold;" text="🥛 Smart Dairy" />
+                  <Text style="-fx-fill: #64748B; -fx-font-size: 14px;" text="Doorstep Milk Management System" />
+               </children>
+            </VBox>
+            
+            <Separator prefWidth="200.0" />
+            
+            <VBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <Label style="-fx-font-weight: bold;" text="Username or Mobile:" />
+                  <TextField fx:id="usernameField" promptText="Enter username (e.g. vendor_ramesh)" />
+                  
+                  <Label style="-fx-font-weight: bold;" text="Password:" />
+                  <PasswordField fx:id="passwordField" promptText="Enter password" />
+
+                  <Label fx:id="errorLabel" style="-fx-text-fill: #EF4444; -fx-font-size: 13px;" visible="false" wrapText="true" />
+               </children>
+            </VBox>
+
+            <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" onAction="#handleLogin" prefHeight="42.0" styleClass="btn-primary" text="SIGN IN TO DASHBOARD">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label style="-fx-text-fill: #94A3B8; -fx-font-size: 12px;" text="Demo Credentials:" />
+                  <Label style="-fx-text-fill: #64748B; -fx-font-size: 12px;" text="Vendor: vendor_ramesh / secret123" />
+                  <Label style="-fx-text-fill: #64748B; -fx-font-size: 12px;" text="Customer: rahul_v / secret123" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="30.0" left="35.0" right="35.0" top="30.0" />
+         </padding>
+      </VBox>
+   </children>
+</StackPane>

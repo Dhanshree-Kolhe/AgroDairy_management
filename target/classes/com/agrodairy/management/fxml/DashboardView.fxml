@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.DashboardController">
+    <children>
+        <Label text="Executive Analytics Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+
+        <!-- Metric Cards Grid -->
+        <HBox spacing="20">
+            <children>
+                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label text="Today's Milk Collection" styleClass="card-title" />
+                    <Label fx:id="dailyVolumeLabel" text="0.00 Liters" styleClass="card-value" />
+                </VBox>
+
+                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label text="Today's Payout Value" styleClass="card-title" />
+                    <Label fx:id="dailyRevenueLabel" text="₹ 0.00" styleClass="card-value" style="-fx-text-fill: #3b82f6;" />
+                </VBox>
+
+                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label text="Active Farmers" styleClass="card-title" />
+                    <Label fx:id="activeFarmersLabel" text="0 Active" styleClass="card-value" style="-fx-text-fill: #f59e0b;" />
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- Chart Container -->
+        <VBox styleClass="card" VBox.vgrow="ALWAYS">
+            <Label text="Weekly Milk Volume Trend" styleClass="card-title" />
+            <BarChart fx:id="collectionChart" prefHeight="350">
+                <xAxis>
+                    <CategoryAxis label="Day" />
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Liters" />
+                </yAxis>
+            </BarChart>
+        </VBox>
+    </children>
+</VBox>

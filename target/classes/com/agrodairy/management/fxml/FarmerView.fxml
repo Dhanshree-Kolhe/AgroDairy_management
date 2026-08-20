@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox spacing="20" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.FarmerManagementController">
+    <!-- Left Registration Form -->
+    <VBox spacing="15" prefWidth="380" styleClass="card">
+        <children>
+            <Label text="Register New Farmer" styleClass="card-title" />
+            <Separator />
+
+            <VBox spacing="5">
+                <Label text="Farmer Code *" styleClass="form-label" />
+                <TextField fx:id="codeField" promptText="e.g. FARM-1005" />
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Full Name *" styleClass="form-label" />
+                <TextField fx:id="nameField" promptText="Farmer Full Name" />
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Phone Number *" styleClass="form-label" />
+                <TextField fx:id="phoneField" promptText="10-digit mobile number" />
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Address" styleClass="form-label" />
+                <TextField fx:id="addressField" promptText="Village, Taluka, District" />
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Milk Supply Type" styleClass="form-label" />
+                <ComboBox fx:id="typeComboBox" maxWidth="Infinity" />
+            </VBox>
+
+            <Separator />
+            <Label text="Bank Account Details" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+
+            <GridPane hgap="10" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
+                </columnConstraints>
+                <children>
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Bank Name" styleClass="form-label" />
+                        <TextField fx:id="bankField" promptText="Bank Name" />
+                    </VBox>
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="IFSC Code" styleClass="form-label" />
+                        <TextField fx:id="ifscField" promptText="IFSC" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <VBox spacing="5">
+                <Label text="Account Number" styleClass="form-label" />
+                <TextField fx:id="accountField" promptText="Bank Account Number" />
+            </VBox>
+
+            <Button text="Save Farmer Record" onAction="#handleSaveFarmer" prefHeight="42" maxWidth="Infinity" styleClass="btn-primary" />
+        </children>
+    </VBox>
+
+    <!-- Right Farmer Table -->
+    <VBox spacing="15" HBox.hgrow="ALWAYS" styleClass="card">
+        <children>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Registered Farmers Directory" styleClass="card-title" />
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="searchField" promptText="Search code, name, phone..." prefWidth="250" />
+                <Button text="Search" onAction="#handleSearch" styleClass="btn-secondary" />
+            </HBox>
+
+            <TableView fx:id="farmerTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idCol" text="ID" prefWidth="50" />
+                    <TableColumn fx:id="codeCol" text="Farmer Code" prefWidth="110" />
+                    <TableColumn fx:id="nameCol" text="Full Name" prefWidth="180" />
+                    <TableColumn fx:id="phoneCol" text="Phone" prefWidth="120" />
+                    <TableColumn fx:id="bankCol" text="Bank" prefWidth="140" />
+                    <TableColumn fx:id="typeCol" text="Milk Type" prefWidth="90" />
+                </columns>
+            </TableView>
+        </children>
+    </VBox>
+</HBox>

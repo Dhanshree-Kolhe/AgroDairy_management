@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.RoutePlannerController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+   </padding>
+   <children>
+      <!-- Action Bar -->
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 12; -fx-background-radius: 8;">
+         <children>
+            <Label style="-fx-font-weight: bold;" text="Delivery Zone Filter:" />
+            <ComboBox fx:id="zoneComboBox" prefWidth="180.0" promptText="All Nagpur Zones" />
+            
+            <Button onAction="#handleCalculateOptimizedRoute" styleClass="btn-primary" text="🚀 Calculate Shortest Delivery Route" />
+            <Region HBox.hgrow="ALWAYS" />
+            
+            <Label fx:id="routeSummaryLabel" style="-fx-font-weight: bold; -fx-text-fill: #2563EB; -fx-font-size: 14px;" text="Total Est. Distance: -- km" />
+         </children>
+      </HBox>
+
+      <!-- Main Split -->
+      <SplitPane dividerPositions="0.45" VBox.vgrow="ALWAYS">
+         <items>
+            <!-- Zone Sequence Map / List -->
+            <VBox spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-padding: 15;">
+               <children>
+                  <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1E293B;" text="Nagpur Zone Dispatch Sequence (Dijkstra Fallback Engine)" />
+                  <Separator />
+                  <ListView fx:id="routeListView" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+
+            <!-- Customer Sequence Details Table -->
+            <VBox style="-fx-background-color: #FFFFFF; -fx-padding: 10;">
+               <children>
+                  <TableView fx:id="customerSequenceTable" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="colSeqNo" prefWidth="60.0" text="Seq #" />
+                        <TableColumn fx:id="colCustCode" prefWidth="90.0" text="Code" />
+                        <TableColumn fx:id="colCustName" prefWidth="140.0" text="Customer Name" />
+                        <TableColumn fx:id="colArea" prefWidth="120.0" text="Area / Zone" />
+                        <TableColumn fx:id="colAddress" prefWidth="180.0" text="Full Address" />
+                     </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </items>
+      </SplitPane>
+   </children>
+</VBox>

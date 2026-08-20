@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" stylesheets="@../css/styles.css" style="-fx-padding: 30;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.CustomerDashboardController">
+    <!-- Header Shell -->
+    <HBox alignment="CENTER_LEFT" styleClass="header-bar" style="-fx-background-radius: 12;">
+        <children>
+            <VBox>
+                <Label fx:id="welcomeLabel" text="Welcome, Customer!" styleClass="header-title" />
+                <Label text="AgroDairy Household &amp; Subscription Portal" style="-fx-text-fill: #10b981; -fx-font-size: 13px;" />
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="Sign Out" onAction="#handleLogout" styleClass="btn-secondary" />
+        </children>
+    </HBox>
+
+    <!-- Cards Grid -->
+    <HBox spacing="20">
+        <children>
+            <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                <Label text="Active Subscription Plan" styleClass="card-title" />
+                <Label fx:id="subscriptionStatusLabel" text="Plan: DAILY" styleClass="card-value" />
+                <Button text="Modify Plan" onAction="#handleModifySubscription" styleClass="btn-secondary" style="-fx-margin-top: 10;" />
+            </VBox>
+
+            <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                <Label text="Prepaid Wallet Balance" styleClass="card-title" />
+                <Label fx:id="walletBalanceLabel" text="₹ 1,250.00" styleClass="card-value" style="-fx-text-fill: #3b82f6;" />
+                <Button text="Recharge Wallet" onAction="#handleRechargeWallet" styleClass="btn-primary" style="-fx-margin-top: 10;" />
+            </VBox>
+        </children>
+    </HBox>
+
+    <!-- Delivery Address Card -->
+    <VBox styleClass="card" spacing="10">
+        <Label text="Default Delivery Address" styleClass="card-title" />
+        <Label fx:id="deliveryAddressLabel" text="Flat 402, Sunshine Apartments, Kothrud, Pune" style="-fx-font-size: 15px; -fx-text-fill: #475569;" />
+    </VBox>
+</VBox>

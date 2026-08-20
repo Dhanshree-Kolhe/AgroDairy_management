@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox spacing="20" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.CustomerManagementController">
+    <!-- Left Customer Input Form -->
+    <VBox spacing="12" prefWidth="420" styleClass="card">
+        <children>
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Customer Details Form" styleClass="card-title" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button text="New / Reset" onAction="#handleClearForm" styleClass="btn-secondary" style="-fx-font-size: 12px; -fx-padding: 4 10;" />
+            </HBox>
+            <Separator />
+
+            <!-- Code & Name -->
+            <GridPane hgap="10" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="40" />
+                    <ColumnConstraints percentWidth="60" />
+                </columnConstraints>
+                <children>
+                    <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Customer ID *" styleClass="form-label" />
+                        <TextField fx:id="codeField" promptText="CUST-1001" />
+                    </VBox>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Full Name *" styleClass="form-label" />
+                        <TextField fx:id="nameField" promptText="Full Name" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Phone & Area -->
+            <GridPane hgap="10" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
+                </columnConstraints>
+                <children>
+                    <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Phone Number *" styleClass="form-label" />
+                        <TextField fx:id="phoneField" promptText="10-digit mobile" />
+                    </VBox>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Area / Sector *" styleClass="form-label" />
+                        <TextField fx:id="areaField" promptText="e.g. Kothrud" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Delivery Address -->
+            <VBox spacing="3">
+                <Label text="Delivery Address" styleClass="form-label" />
+                <TextField fx:id="addressField" promptText="Flat / House No, Building, Landmark" />
+            </VBox>
+
+            <!-- Milk Type & Price Plan -->
+            <GridPane hgap="10" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
+                </columnConstraints>
+                <children>
+                    <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Milk Type" styleClass="form-label" />
+                        <ComboBox fx:id="milkTypeComboBox" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Price Plan (₹ / L)" styleClass="form-label" />
+                        <TextField fx:id="priceField" promptText="60.00" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Quantities (Morning & Evening) -->
+            <GridPane hgap="10" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
+                </columnConstraints>
+                <children>
+                    <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Morning Qty (Liters)" styleClass="form-label" />
+                        <TextField fx:id="morningQtyField" promptText="1.0" />
+                    </VBox>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Evening Qty (Liters)" styleClass="form-label" />
+                        <TextField fx:id="eveningQtyField" promptText="1.0" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Subscription & Status -->
+            <GridPane hgap="10" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
+                </columnConstraints>
+                <children>
+                    <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Subscription Type" styleClass="form-label" />
+                        <ComboBox fx:id="subscriptionComboBox" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Status" styleClass="form-label" />
+                        <ComboBox fx:id="statusComboBox" maxWidth="Infinity" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <Separator />
+
+            <!-- Action Buttons -->
+            <HBox spacing="10">
+                <Button fx:id="saveButton" text="Add Customer" onAction="#handleSaveCustomer" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary" />
+                <Button fx:id="updateButton" text="Update" onAction="#handleUpdateCustomer" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary" />
+                <Button fx:id="deleteButton" text="Deactivate" onAction="#handleDeleteCustomer" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" />
+            </HBox>
+        </children>
+    </VBox>
+
+    <!-- Right Customers Table Panel -->
+    <VBox spacing="15" HBox.hgrow="ALWAYS" styleClass="card">
+        <children>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <VBox>
+                    <Label text="Customer Directory" styleClass="card-title" />
+                    <Label text="Click any row to view / edit customer profile" style="-fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="searchField" promptText="Search name, phone, code, area..." prefWidth="280" />
+            </HBox>
+
+            <TableView fx:id="customerTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idCol" text="ID" prefWidth="40" />
+                    <TableColumn fx:id="codeCol" text="Code" prefWidth="90" />
+                    <TableColumn fx:id="nameCol" text="Name" prefWidth="140" />
+                    <TableColumn fx:id="phoneCol" text="Phone" prefWidth="100" />
+                    <TableColumn fx:id="areaCol" text="Area" prefWidth="90" />
+                    <TableColumn fx:id="typeCol" text="Type" prefWidth="65" />
+                    <TableColumn fx:id="morningQtyCol" text="M.Qty" prefWidth="55" />
+                    <TableColumn fx:id="eveningQtyCol" text="E.Qty" prefWidth="55" />
+                    <TableColumn fx:id="totalQtyCol" text="Total" prefWidth="55" />
+                    <TableColumn fx:id="priceCol" text="Price (₹)" prefWidth="65" />
+                    <TableColumn fx:id="subscriptionCol" text="Subscription" prefWidth="95" />
+                    <TableColumn fx:id="statusCol" text="Status" prefWidth="75" />
+                </columns>
+            </TableView>
+        </children>
+    </VBox>
+</HBox>

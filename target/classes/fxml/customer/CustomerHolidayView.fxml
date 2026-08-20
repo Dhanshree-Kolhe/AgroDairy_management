@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.CustomerHolidayController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+   </padding>
+   <children>
+      <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
+         <items>
+            <!-- Form Container -->
+            <VBox spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 18;">
+               <children>
+                  <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1E293B;" text="Submit Delivery Pause Request" />
+                  <Label style="-fx-text-fill: #EF4444; -fx-font-size: 12px;" text="* Note: Next morning pause requests must be submitted before 10:00 PM today." wrapText="true" />
+                  <Separator />
+
+                  <Label style="-fx-font-weight: bold;" text="Start Date *" />
+                  <DatePicker fx:id="startDatePicker" maxWidth="1.7976931348623157E308" />
+
+                  <Label style="-fx-font-weight: bold;" text="End Date *" />
+                  <DatePicker fx:id="endDatePicker" maxWidth="1.7976931348623157E308" />
+
+                  <Label style="-fx-font-weight: bold;" text="Reason / Remarks *" />
+                  <TextArea fx:id="reasonArea" prefHeight="90.0" promptText="e.g. Out of town / Traveling to village" wrapText="true" />
+
+                  <Button maxWidth="1.7976931348623157E308" onAction="#handleSubmitRequest" prefHeight="40.0" styleClass="btn-primary" text="🌴 Submit Pause Request" />
+               </children>
+            </VBox>
+
+            <!-- Table Container -->
+            <VBox style="-fx-background-color: #FFFFFF; -fx-padding: 10;">
+               <children>
+                  <TableView fx:id="holidayTable" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="colReqId" prefWidth="90.0" text="Request ID" />
+                        <TableColumn fx:id="colStartDate" prefWidth="120.0" text="Start Date" />
+                        <TableColumn fx:id="colEndDate" prefWidth="120.0" text="End Date" />
+                        <TableColumn fx:id="colReason" prefWidth="180.0" text="Reason" />
+                        <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+                     </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </items>
+      </SplitPane>
+   </children>
+</VBox>

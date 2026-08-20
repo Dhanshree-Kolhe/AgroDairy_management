@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.CustomerBillsController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+   </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 12; -fx-background-radius: 8;">
+         <children>
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1E293B;" text="My Monthly Bill Statements &amp; Payment History" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#loadBills" styleClass="btn-secondary" text="🔄 Refresh Statements" />
+         </children>
+      </HBox>
+
+      <VBox style="-fx-background-color: #FFFFFF; -fx-padding: 15; -fx-background-radius: 8;" VBox.vgrow="ALWAYS">
+         <children>
+            <TableView fx:id="billsTable" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colBillNum" prefWidth="140.0" text="Bill Number" />
+                  <TableColumn fx:id="colPeriod" prefWidth="100.0" text="Billing Period" />
+                  <TableColumn fx:id="colMilkQty" prefWidth="110.0" text="Total Milk (L)" />
+                  <TableColumn fx:id="colMilkChg" prefWidth="120.0" text="Milk Charges" />
+                  <TableColumn fx:id="colExtraChg" prefWidth="110.0" text="Extra Orders" />
+                  <TableColumn fx:id="colNet" prefWidth="130.0" text="Net Payable (₹)" />
+                  <TableColumn fx:id="colPaid" prefWidth="120.0" text="Amount Paid" />
+                  <TableColumn fx:id="colDue" prefWidth="130.0" text="Balance Due (₹)" />
+                  <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+               </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</VBox>

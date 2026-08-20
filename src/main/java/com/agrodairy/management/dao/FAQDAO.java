@@ -1,0 +1,4 @@
+package com.agrodairy.management.dao;
+
+public interface FAQDAO extends FAQKnowledgeBaseDAO {
+}

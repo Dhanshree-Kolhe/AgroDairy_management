@@ -1,0 +1,15 @@
+com\agrodairy\management\service\CustomerServiceTest$StubCustomerDAO.class
+com\agrodairy\management\service\AuthServiceTest.class
+com\agrodairy\management\service\BillingAndPaymentServiceTest.class
+com\agrodairy\management\service\HolidayAndKnowledgeServiceTest$StubFAQKnowledgeBaseDAO.class
+com\agrodairy\management\service\InventoryAndExtraOrderServiceTest.class
+com\agrodairy\management\service\AuthServiceTest$StubUserLoginDAO.class
+com\agrodairy\management\service\HolidayAndKnowledgeServiceTest.class
+com\agrodairy\management\service\InventoryAndExtraOrderServiceTest$StubInventoryDAO.class
+com\agrodairy\management\service\DeliveryServiceTest.class
+com\agrodairy\management\service\DeliveryServiceTest$StubCustomerDAO.class
+com\agrodairy\management\service\BillingAndPaymentServiceTest$StubMonthlyBillDAO.class
+com\agrodairy\management\service\DeliveryServiceTest$StubHolidayRequestDAO.class
+com\agrodairy\management\service\BillingAndPaymentServiceTest$StubPaymentDAO.class
+com\agrodairy\management\service\CustomerServiceTest.class
+com\agrodairy\management\service\DeliveryServiceTest$StubDeliveryRecordDAO.class

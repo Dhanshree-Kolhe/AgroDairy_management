@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.KnowledgeAssistantController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+   </padding>
+   <children>
+      <!-- Top Search Header Bar -->
+      <VBox spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-padding: 16; -fx-background-radius: 8;">
+         <children>
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1E293B;" text="📚 Offline Dairy Knowledge Assistant" />
+            <Label style="-fx-text-fill: #64748B; -fx-font-size: 13px;" text="Instant local keyword search for milk hygiene, boiling guidelines, paneer &amp; ghee storage." />
+            <HBox spacing="12.0">
+               <children>
+                  <TextField fx:id="searchField" prefHeight="38.0" promptText="Type question or keywords (e.g. paneer fridge storage, boiling cow milk...)" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="categoryComboBox" prefHeight="38.0" prefWidth="180.0" promptText="All Categories" />
+                  <Button onAction="#handleSearch" prefHeight="38.0" styleClass="btn-primary" text="🔍 Search FAQ" />
+                  <Button onAction="#handleShowAll" prefHeight="38.0" styleClass="btn-secondary" text="Show All" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+
+      <!-- Scrollable Answers List -->
+      <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="faqResultsContainer" spacing="12.0">
+               <padding>
+                  <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

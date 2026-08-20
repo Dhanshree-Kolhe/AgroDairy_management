@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.CustomerManagementController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+   </padding>
+   <children>
+      <!-- Top Action Bar -->
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 12; -fx-background-radius: 8;">
+         <children>
+            <TextField fx:id="searchField" prefWidth="300.0" promptText="🔍 Search by name, mobile, code, area..." />
+            <Button onAction="#handleSearch" styleClass="btn-primary" text="Search" />
+            <Button onAction="#handleResetSearch" styleClass="btn-secondary" text="Reset" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleClearForm" styleClass="btn-secondary" text="+ Clear Form" />
+            <Button onAction="#handleSaveCustomer" styleClass="btn-success" text="💾 Save / Update Customer" />
+            <Button onAction="#handleDeleteCustomer" styleClass="btn-danger" text="🗑️ Deactivate" />
+         </children>
+      </HBox>
+
+      <!-- Main Form & Table Split -->
+      <SplitPane dividerPositions="0.38" VBox.vgrow="ALWAYS">
+         <items>
+            <!-- Form Container -->
+            <VBox spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-padding: 15;">
+               <children>
+                  <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1E293B;" text="Customer Subscription Form" />
+                  <Separator />
+                  <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                     <content>
+                        <VBox spacing="10.0">
+                           <children>
+                              <Label style="-fx-font-weight: bold;" text="Full Name *" />
+                              <TextField fx:id="fullNameField" promptText="e.g. Rahul Verma" />
+
+                              <Label style="-fx-font-weight: bold;" text="Mobile Number (10 Digits) *" />
+                              <TextField fx:id="phoneField" promptText="e.g. 9876500001" />
+
+                              <Label style="-fx-font-weight: bold;" text="Delivery Zone / Area *" />
+                              <ComboBox fx:id="areaComboBox" maxWidth="1.7976931348623157E308" promptText="Select Nagpur Area" />
+
+                              <Label style="-fx-font-weight: bold;" text="Street &amp; House Number *" />
+                              <TextField fx:id="houseStreetField" promptText="House No, Street Name" />
+
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <VBox HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label style="-fx-font-weight: bold;" text="Milk Type *" />
+                                          <ComboBox fx:id="milkTypeComboBox" maxWidth="1.7976931348623157E308" />
+                                       </children>
+                                    </VBox>
+                                    <VBox HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label style="-fx-font-weight: bold;" text="Delivery Shift *" />
+                                          <ComboBox fx:id="shiftComboBox" maxWidth="1.7976931348623157E308" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <VBox HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label style="-fx-font-weight: bold;" text="Morning Qty (L) *" />
+                                          <TextField fx:id="morningQtyField" promptText="1.5" />
+                                       </children>
+                                    </VBox>
+                                    <VBox HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label style="-fx-font-weight: bold;" text="Evening Qty (L) *" />
+                                          <TextField fx:id="eveningQtyField" promptText="1.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+
+                              <Label style="-fx-font-weight: bold;" text="Milk Rate (₹ / Liter) *" />
+                              <TextField fx:id="priceField" promptText="60.00" />
+
+                              <Label style="-fx-font-weight: bold;" text="Subscription Status *" />
+                              <ComboBox fx:id="statusComboBox" maxWidth="1.7976931348623157E308" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+
+            <!-- Table Container -->
+            <VBox style="-fx-background-color: #FFFFFF; -fx-padding: 10;">
+               <children>
+                  <TableView fx:id="customerTable" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="colCode" prefWidth="90.0" text="Code" />
+                        <TableColumn fx:id="colName" prefWidth="140.0" text="Name" />
+                        <TableColumn fx:id="colPhone" prefWidth="110.0" text="Phone" />
+                        <TableColumn fx:id="colArea" prefWidth="120.0" text="Area" />
+                        <TableColumn fx:id="colMilk" prefWidth="80.0" text="Milk" />
+                        <TableColumn fx:id="colMorn" prefWidth="65.0" text="M(L)" />
+                        <TableColumn fx:id="colEve" prefWidth="65.0" text="E(L)" />
+                        <TableColumn fx:id="colRate" prefWidth="75.0" text="Rate (₹)" />
+                        <TableColumn fx:id="colStatus" prefWidth="90.0" text="Status" />
+                     </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </items>
+      </SplitPane>
+   </children>
+</VBox>
