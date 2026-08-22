@@ -9,6 +9,7 @@ com\agrodairy\management\service\InventoryAndExtraOrderServiceTest$StubInventory
 com\agrodairy\management\service\DeliveryServiceTest.class
 com\agrodairy\management\service\DeliveryServiceTest$StubCustomerDAO.class
 com\agrodairy\management\service\BillingAndPaymentServiceTest$StubMonthlyBillDAO.class
+com\agrodairy\management\service\Phase5And6IntegrationTest.class
 com\agrodairy\management\service\DeliveryServiceTest$StubHolidayRequestDAO.class
 com\agrodairy\management\service\BillingAndPaymentServiceTest$StubPaymentDAO.class
 com\agrodairy\management\service\CustomerServiceTest.class

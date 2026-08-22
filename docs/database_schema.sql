@@ -4,8 +4,8 @@
 -- Standard: 3rd Normal Form (3NF) compliant with ACID Guarantees
 -- =================================================================
 
-CREATE DATABASE IF NOT EXISTS agro_dairy_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE agro_dairy_db;
+CREATE DATABASE IF NOT EXISTS agro_dairy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE agro_dairy;
 
 -- Enable Foreign Key Checks
 SET FOREIGN_KEY_CHECKS = 0;
@@ -266,17 +266,17 @@ CREATE TABLE faq_knowledge_base (
 
 -- 1. Users (1 Vendor User + 10 Customer Users)
 INSERT INTO users (username, password_hash, full_name, email, phone, role) VALUES 
-('vendor_ramesh', '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Ramesh Dairy Farm Owner', 'ramesh@agrodairy.com', '9822011223', 'VENDOR'),
-('cust_rahul',    '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Rahul Verma', 'rahul@gmail.com', '9876500001', 'CUSTOMER'),
-('cust_sunita',   '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Sunita Deshmukh', 'sunita@gmail.com', '9876500002', 'CUSTOMER'),
-('cust_vikram',   '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Vikram Joshi', 'vikram@gmail.com', '9876500003', 'CUSTOMER'),
-('cust_mahesh',   '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Mahesh Patil', 'mahesh@gmail.com', '9876500004', 'CUSTOMER'),
-('cust_anita',    '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Anita Shinde', 'anita@gmail.com', '9876500005', 'CUSTOMER'),
-('cust_sanjay',   '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Sanjay Kulkarni', 'sanjay@gmail.com', '9876500006', 'CUSTOMER'),
-('cust_priya',    '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Priya Nair', 'priya@gmail.com', '9876500007', 'CUSTOMER'),
-('cust_amit',     '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Amit Shah', 'amit@gmail.com', '9876500008', 'CUSTOMER'),
-('cust_pooja',    '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Pooja Mehta', 'pooja@gmail.com', '9876500009', 'CUSTOMER'),
-('cust_rajesh',   '$2a$12$K8C.k2B.P8p5O6hJ3iN1e.1P4X.sKzR6D2Y0wR8S.7e7y0Y1u5W4O', 'Rajesh Pawar', 'rajesh@gmail.com', '9876500010', 'CUSTOMER');
+('vendor_ramesh', '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Ramesh Dairy Farm Owner', 'ramesh@agrodairy.com', '9822011223', 'VENDOR'),
+('cust_rahul',    '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Rahul Verma', 'rahul@gmail.com', '9876500001', 'CUSTOMER'),
+('cust_sunita',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Sunita Deshmukh', 'sunita@gmail.com', '9876500002', 'CUSTOMER'),
+('cust_vikram',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Vikram Joshi', 'vikram@gmail.com', '9876500003', 'CUSTOMER'),
+('cust_mahesh',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Mahesh Patil', 'mahesh@gmail.com', '9876500004', 'CUSTOMER'),
+('cust_anita',    '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Anita Shinde', 'anita@gmail.com', '9876500005', 'CUSTOMER'),
+('cust_sanjay',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Sanjay Kulkarni', 'sanjay@gmail.com', '9876500006', 'CUSTOMER'),
+('cust_priya',    '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Priya Nair', 'priya@gmail.com', '9876500007', 'CUSTOMER'),
+('cust_amit',     '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Amit Shah', 'amit@gmail.com', '9876500008', 'CUSTOMER'),
+('cust_pooja',    '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Pooja Mehta', 'pooja@gmail.com', '9876500009', 'CUSTOMER'),
+('cust_rajesh',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Rajesh Pawar', 'rajesh@gmail.com', '9876500010', 'CUSTOMER');
 
 -- 2. Vendor Record (Nagpur Headquarters)
 INSERT INTO vendors (user_id, vendor_code, business_name, owner_name, phone, email, address, gst_number) VALUES

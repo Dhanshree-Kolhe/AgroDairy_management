@@ -13,6 +13,7 @@
          <children>
             <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1E293B;" text="My Monthly Bill Statements &amp; Payment History" />
             <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleExportPdfInvoice" styleClass="btn-info" text="📄 Download Invoice PDF" />
             <Button onAction="#loadBills" styleClass="btn-secondary" text="🔄 Refresh Statements" />
          </children>
       </HBox>

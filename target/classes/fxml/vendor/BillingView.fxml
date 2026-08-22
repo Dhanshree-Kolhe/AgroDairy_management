@@ -20,6 +20,8 @@
             
             <Button onAction="#handleGenerateMonthlyBills" styleClass="btn-primary" text="⚡ Generate Monthly Bills" />
             <Button onAction="#loadBillsForPeriod" styleClass="btn-secondary" text="🔍 View Bills" />
+            <Button onAction="#handleExportPdfInvoice" styleClass="btn-info" text="📄 Export PDF Invoice" />
+            <Button onAction="#handleExportExcelLedger" styleClass="btn-secondary" text="📊 Export Excel Ledger" />
             
             <Region HBox.hgrow="ALWAYS" />
             <Button onAction="#handleOpenPaymentDialog" styleClass="btn-success" text="💳 Record Payment" />

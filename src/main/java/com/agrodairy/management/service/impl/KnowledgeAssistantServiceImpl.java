@@ -22,10 +22,17 @@ public class KnowledgeAssistantServiceImpl implements KnowledgeAssistantService 
 
     @Override
     public List<FAQKnowledgeBase> searchFAQs(String searchQuery) {
+        List<FAQKnowledgeBase> all = getAllFAQs();
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            return faqKnowledgeBaseDAO.findAll();
+            return all;
         }
-        return faqKnowledgeBaseDAO.searchByKeyword(searchQuery.trim());
+        String q = searchQuery.trim().toLowerCase();
+        return all.stream()
+                .filter(faq -> (faq.getQuestion() != null && faq.getQuestion().toLowerCase().contains(q)) ||
+                               (faq.getKeywords() != null && faq.getKeywords().toLowerCase().contains(q)) ||
+                               (faq.getCategory() != null && faq.getCategory().toLowerCase().contains(q)) ||
+                               (faq.getAnswer() != null && faq.getAnswer().toLowerCase().contains(q)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -34,14 +41,14 @@ public class KnowledgeAssistantServiceImpl implements KnowledgeAssistantService 
             throw new ValidationException("Question query cannot be empty.");
         }
 
-        List<FAQKnowledgeBase> allFaqs = faqKnowledgeBaseDAO.findAll();
+        List<FAQKnowledgeBase> allFaqs = getAllFAQs();
         if (allFaqs.isEmpty()) {
             return createFallbackFAQ("No FAQ articles available in local knowledge base.");
         }
 
         String[] tokens = userQuery.toLowerCase().replaceAll("[^a-zA-Z0-9\\s]", "").split("\\s+");
         Set<String> queryTokens = Arrays.stream(tokens)
-                .filter(t -> t.length() > 2) // Filter out short stop words (is, in, to, a, or, etc.)
+                .filter(t -> t.length() > 2) // Filter out short stop words
                 .collect(Collectors.toSet());
 
         if (queryTokens.isEmpty()) {
@@ -80,15 +87,25 @@ public class KnowledgeAssistantServiceImpl implements KnowledgeAssistantService 
 
     @Override
     public List<FAQKnowledgeBase> getFAQsByCategory(String category) {
-        if (category == null || category.trim().isEmpty()) {
-            return faqKnowledgeBaseDAO.findAll();
+        if (category == null || category.trim().isEmpty() || category.equalsIgnoreCase("All Categories")) {
+            return getAllFAQs();
         }
-        return faqKnowledgeBaseDAO.findByCategory(category.trim());
+        return getAllFAQs().stream()
+                .filter(f -> f.getCategory() != null && f.getCategory().equalsIgnoreCase(category.trim()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<FAQKnowledgeBase> getAllFAQs() {
-        return faqKnowledgeBaseDAO.findAll();
+        try {
+            List<FAQKnowledgeBase> list = faqKnowledgeBaseDAO.findAll();
+            if (list != null && !list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            // Database offline or failed, fall back to offline JSON resource
+        }
+        return loadFromJsonResource();
     }
 
     @Override
@@ -104,6 +121,28 @@ public class KnowledgeAssistantServiceImpl implements KnowledgeAssistantService 
         Long id = faqKnowledgeBaseDAO.insert(faq);
         faq.setFaqId(id);
         return faq;
+    }
+
+    private List<FAQKnowledgeBase> loadFromJsonResource() {
+        List<FAQKnowledgeBase> list = new ArrayList<>();
+        try (java.io.InputStream is = getClass().getResourceAsStream("/json/dairy_knowledge_base.json")) {
+            if (is == null) return list;
+            String jsonText = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            // Simple regex parser for FAQ objects from JSON
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\{\\s*\"faq_id\":\\s*(\\d+),\\s*\"question\":\\s*\"([^\"]+)\",\\s*\"answer\":\\s*\"([^\"]+)\",\\s*\"category\":\\s*\"([^\"]+)\",\\s*\"keywords\":\\s*\"([^\"]+)\",\\s*\"tags\":\\s*\"([^\"]+)\"\\s*\\}");
+            java.util.regex.Matcher matcher = pattern.matcher(jsonText);
+            while (matcher.find()) {
+                FAQKnowledgeBase faq = new FAQKnowledgeBase();
+                faq.setFaqId(Long.parseLong(matcher.group(1)));
+                faq.setQuestion(matcher.group(2));
+                faq.setAnswer(matcher.group(3));
+                faq.setCategory(matcher.group(4));
+                faq.setKeywords(matcher.group(5));
+                faq.setTags(matcher.group(6));
+                list.add(faq);
+            }
+        } catch (Exception ignored) {}
+        return list;
     }
 
     private FAQKnowledgeBase createFallbackFAQ(String fallbackMessage) {

@@ -17,6 +17,7 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         try {
             logger.info("Launching Smart Dairy Management System Desktop Application...");
+            com.agrodairy.management.util.NavigationManager.init(primaryStage);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/auth/LoginView.fxml"));
             Parent root = loader.load();

@@ -58,4 +58,40 @@ public class CustomerBillsController {
         List<MonthlyBill> list = billingService.getCustomerBillHistory(cId);
         billsTable.setItems(FXCollections.observableArrayList(list));
     }
+
+    @FXML
+    public void handleExportPdfInvoice() {
+        MonthlyBill selectedBill = billsTable.getSelectionModel().getSelectedItem();
+        if (selectedBill == null) {
+            com.agrodairy.management.util.AlertUtils.showWarning("Selection Required", "Please select a bill to download invoice PDF.");
+            return;
+        }
+
+        try {
+            Customer customer = SessionManager.getCurrentCustomer();
+            if (customer == null) {
+                customer = new com.agrodairy.management.dao.impl.CustomerDAOImpl().findById(selectedBill.getCustomerId()).orElse(new Customer());
+            }
+
+            List<com.agrodairy.management.model.DeliveryRecord> delRecords = new com.agrodairy.management.dao.impl.DeliveryRecordDAOImpl()
+                    .findByCustomerAndMonth(selectedBill.getCustomerId(), selectedBill.getBillingMonth(), selectedBill.getBillingYear());
+            List<com.agrodairy.management.model.ExtraOrder> extraOrders = new com.agrodairy.management.dao.impl.ExtraOrderDAOImpl()
+                    .findByCustomerAndMonth(selectedBill.getCustomerId(), selectedBill.getBillingMonth(), selectedBill.getBillingYear());
+            List<com.agrodairy.management.model.Payment> payments = new com.agrodairy.management.dao.impl.PaymentDAOImpl()
+                    .findByBillId(selectedBill.getBillId());
+
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Download Monthly Invoice PDF");
+            fileChooser.setInitialFileName(selectedBill.getBillNumber() + ".pdf");
+            fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("PDF Documents (*.pdf)", "*.pdf"));
+
+            java.io.File file = fileChooser.showSaveDialog(billsTable.getScene().getWindow());
+            if (file != null) {
+                com.agrodairy.management.util.PdfInvoiceGenerator.generateMonthlyInvoicePdf(selectedBill, customer, delRecords, extraOrders, payments, file);
+                com.agrodairy.management.util.AlertUtils.showInfo("Invoice Downloaded", "Invoice PDF saved successfully to:\n" + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            com.agrodairy.management.util.AlertUtils.showError("Download Error", "Failed to download PDF invoice: " + e.getMessage());
+        }
+    }
 }

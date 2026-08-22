@@ -164,4 +164,67 @@ public class BillingController {
             }
         }
     }
+
+    @FXML
+    public void handleExportPdfInvoice() {
+        MonthlyBill selectedBill = billsTable.getSelectionModel().getSelectedItem();
+        if (selectedBill == null) {
+            AlertUtils.showWarning("Selection Required", "Please select a bill from the table to export PDF invoice.");
+            return;
+        }
+
+        try {
+            Customer customer = customerDAO.findById(selectedBill.getCustomerId()).orElse(new Customer());
+            List<com.agrodairy.management.model.DeliveryRecord> delRecords = new com.agrodairy.management.dao.impl.DeliveryRecordDAOImpl()
+                    .findByCustomerAndMonth(selectedBill.getCustomerId(), selectedBill.getBillingMonth(), selectedBill.getBillingYear());
+            List<com.agrodairy.management.model.ExtraOrder> extraOrders = new com.agrodairy.management.dao.impl.ExtraOrderDAOImpl()
+                    .findByCustomerAndMonth(selectedBill.getCustomerId(), selectedBill.getBillingMonth(), selectedBill.getBillingYear());
+            List<com.agrodairy.management.model.Payment> payments = new com.agrodairy.management.dao.impl.PaymentDAOImpl()
+                    .findByBillId(selectedBill.getBillId());
+
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Save Monthly Invoice PDF");
+            fileChooser.setInitialFileName(selectedBill.getBillNumber() + ".pdf");
+            fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("PDF Documents (*.pdf)", "*.pdf"));
+
+            java.io.File file = fileChooser.showSaveDialog(billsTable.getScene().getWindow());
+            if (file != null) {
+                com.agrodairy.management.util.PdfInvoiceGenerator.generateMonthlyInvoicePdf(selectedBill, customer, delRecords, extraOrders, payments, file);
+                AlertUtils.showInfo("Invoice Exported", "Invoice PDF saved successfully to:\n" + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            AlertUtils.showError("PDF Export Error", "Failed to generate PDF: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleExportExcelLedger() {
+        try {
+            List<MonthlyBill> currentBills = billsTable.getItems();
+            if (currentBills == null || currentBills.isEmpty()) {
+                AlertUtils.showWarning("No Data", "No monthly bills available to export to Excel.");
+                return;
+            }
+
+            java.util.Map<Long, Customer> custMap = new java.util.HashMap<>();
+            for (MonthlyBill b : currentBills) {
+                if (!custMap.containsKey(b.getCustomerId())) {
+                    customerDAO.findById(b.getCustomerId()).ifPresent(c -> custMap.put(c.getCustomerId(), c));
+                }
+            }
+
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Save Financial Ledger Excel File");
+            fileChooser.setInitialFileName("Dairy_Financial_Ledger_" + System.currentTimeMillis() + ".xlsx");
+            fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Excel Spreadsheets (*.xlsx)", "*.xlsx"));
+
+            java.io.File file = fileChooser.showSaveDialog(billsTable.getScene().getWindow());
+            if (file != null) {
+                com.agrodairy.management.util.ExcelReportExporter.exportFinancialRecordsToExcel(currentBills, custMap, file);
+                AlertUtils.showInfo("Excel Exported", "Excel report saved successfully to:\n" + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            AlertUtils.showError("Excel Export Error", "Failed to export Excel file: " + e.getMessage());
+        }
+    }
 }

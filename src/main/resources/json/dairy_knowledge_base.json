@@ -41,14 +41,38 @@
   },
   {
     "faq_id": 6,
-    "question": "How to set thick and sweet curd (Dahi) at home?",
-    "answer": "Boil milk and cool to lukewarm (approx 40°C). Add 1-2 tablespoons of fresh starter curd. Mix well, cover tightly, and keep in a warm place undisturbed for 6 to 8 hours.",
-    "category": "Curd Making",
-    "keywords": "curd, dahi, yogurt, set curd, starter, temperature, fermentation",
-    "tags": "Curd, Home Recipe"
+    "question": "How to set thick and sweet curd (Dahi) at home and store it?",
+    "answer": "Boil milk and cool to lukewarm (approx 40°C). Add 1-2 tablespoons of fresh starter curd. Mix well, cover tightly, and keep in a warm place for 6-8 hours. Once set, refrigerate immediately at 4°C to prevent it from turning sour. Curd stays fresh for 3-4 days.",
+    "category": "Curd Storage",
+    "keywords": "curd, dahi, yogurt, set curd, starter, temperature, fermentation, store, curd storage",
+    "tags": "Curd, Home Recipe, Curd Storage"
   },
   {
     "faq_id": 7,
+    "question": "What are the essential dairy hygiene standards for milking utensils and cans?",
+    "answer": "Rinse all stainless steel milking pails, cans, and storage containers immediately with cold water after use. Wash thoroughly with food-grade detergent and warm water, then sanitize with hot water (80°C+) or sun dry completely before reuse.",
+    "category": "Dairy Hygiene",
+    "keywords": "hygiene, dairy hygiene, clean, sanitation, sanitize, utensils, milk cans, wash, bacterial contamination",
+    "tags": "Hygiene, Quality Control"
+  },
+  {
+    "faq_id": 8,
+    "question": "How to monitor cow health and prevent common cattle illnesses?",
+    "answer": "Inspect cows daily for clear eyes, smooth coat, active chewing of cud, normal body temperature (101.5°F/38.6°C), and normal udder condition. Ensure timely vaccinations against FMD, HS, and BQ. Maintain clean, dry bedding to prevent mastitis.",
+    "category": "Cow Health",
+    "keywords": "cow health, health, cattle health, mastitis, vaccination, temperature, disease, vet care",
+    "tags": "Cattle Care, Veterinary"
+  },
+  {
+    "faq_id": 9,
+    "question": "What is the recommended daily cattle feeding ratio for high milk yield?",
+    "answer": "A healthy lactating cow requires 60% green fodder (legumes/maize/napier grass), 25% dry fodder (wheat straw/jowar kadbi), and 15% concentrated feed mix enriched with 2% mineral mixture and 1% common salt. Ensure 50-70 liters of clean drinking water daily.",
+    "category": "Cattle Feeding",
+    "keywords": "cattle feeding, feeding, fodder, feed, green fodder, dry fodder, mineral mix, fat percentage, milk yield",
+    "tags": "Nutrition, Farm Management"
+  },
+  {
+    "faq_id": 10,
     "question": "What are the health benefits of Cow Milk vs Buffalo Milk?",
     "answer": "Cow milk is lighter, lower in fat (approx 3.5-4%), and easy to digest (ideal for kids & elderly). Buffalo milk is rich in fat (6-8%), thicker, and ideal for making Khoa, Paneer, Kheer and Ghee.",
     "category": "Nutrition Comparison",
@@ -56,7 +80,7 @@
     "tags": "Nutrition, Milk Types"
   },
   {
-    "faq_id": 8,
+    "faq_id": 11,
     "question": "How does the doorstep delivery subscription and holiday pause work?",
     "answer": "You can pause your daily milk delivery for upcoming holidays directly through the Customer App before 10 PM on the previous day. Paused days will not be charged in your monthly bill.",
     "category": "Customer Support",

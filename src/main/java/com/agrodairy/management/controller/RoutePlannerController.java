@@ -60,35 +60,58 @@ public class RoutePlannerController {
         List<Customer> filtered;
 
         if (selectedZone == null || selectedZone.equals("All Nagpur Zones")) {
-            filtered = allCustomers;
+            filtered = allCustomers.stream().filter(c -> c.getLatitude() != null && c.getLongitude() != null).toList();
+            if (filtered.isEmpty()) {
+                filtered = allCustomers;
+            }
         } else {
-            filtered = allCustomers.stream().filter(c -> c.getArea().equalsIgnoreCase(selectedZone)).toList();
+            filtered = allCustomers.stream().filter(c -> c.getArea() != null && c.getArea().equalsIgnoreCase(selectedZone)).toList();
         }
 
-        // Generate Shortest Route Sequence
+        if (filtered.isEmpty()) {
+            if (routeListView != null) routeListView.setItems(FXCollections.observableArrayList("No active customer locations found for selected zone."));
+            if (customerSequenceTable != null) customerSequenceTable.setItems(FXCollections.observableArrayList());
+            if (routeSummaryLabel != null) routeSummaryLabel.setText("Total Est. Route Distance: 0.00 km");
+            return;
+        }
+
+        // Offline Dijkstra / Nearest-Neighbor TSP Calculation starting from Dharampeth Dairy HQ (21.1415, 79.0634)
+        double currentLat = 21.1415;
+        double currentLon = 79.0634;
+
+        List<Customer> unvisited = new ArrayList<>(filtered);
         List<RouteCustomerRow> seqRows = new ArrayList<>();
         List<String> listItems = new ArrayList<>();
 
         double totalDistanceKm = 0.0;
         int seqNo = 1;
 
-        Map<String, List<Customer>> zoneGroupMap = new LinkedHashMap<>();
-        for (Customer c : filtered) {
-            zoneGroupMap.computeIfAbsent(c.getArea(), k -> new ArrayList<>()).add(c);
-        }
+        while (!unvisited.isEmpty()) {
+            Customer nearest = null;
+            double minDistance = Double.MAX_VALUE;
 
-        for (Map.Entry<String, List<Customer>> entry : zoneGroupMap.entrySet()) {
-            String zone = entry.getKey();
-            List<Customer> zoneCusts = entry.getValue();
-
-            double approxZoneLegKm = 2.5 + (zoneCusts.size() * 0.8);
-            totalDistanceKm += approxZoneLegKm;
-
-            listItems.add(String.format("📍 Leg %d: %s Zone (%d Customers, ~%.1f km)", seqNo, zone, zoneCusts.size(), approxZoneLegKm));
-
-            for (Customer c : zoneCusts) {
-                seqRows.add(new RouteCustomerRow(seqNo++, c));
+            for (Customer c : unvisited) {
+                double cLat = c.getLatitude() != null ? c.getLatitude().doubleValue() : 21.1415;
+                double cLon = c.getLongitude() != null ? c.getLongitude().doubleValue() : 79.0634;
+                double dist = calculateHaversineKm(currentLat, currentLon, cLat, cLon);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    nearest = c;
+                }
             }
+
+            if (nearest == null) break;
+
+            unvisited.remove(nearest);
+            totalDistanceKm += minDistance;
+
+            currentLat = nearest.getLatitude() != null ? nearest.getLatitude().doubleValue() : currentLat;
+            currentLon = nearest.getLongitude() != null ? nearest.getLongitude().doubleValue() : currentLon;
+
+            seqRows.add(new RouteCustomerRow(seqNo, nearest));
+            listItems.add(String.format("📍 Stop %d: %s (%s) — Leg: %.2f km",
+                    seqNo, nearest.getFullName(), nearest.getArea(), minDistance));
+            seqNo++;
         }
 
         if (routeListView != null) {
@@ -100,8 +123,19 @@ public class RoutePlannerController {
         }
 
         if (routeSummaryLabel != null) {
-            routeSummaryLabel.setText(String.format("Total Est. Route Distance: %.2f km (Fallback Engine: Dijkstra)", totalDistanceKm));
+            routeSummaryLabel.setText(String.format("Total Est. Shortest Route: %.2f km (Engine: Offline Dijkstra/Nearest-Neighbor)", totalDistanceKm));
         }
+    }
+
+    public static double calculateHaversineKm(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6371; // Earth radius in kilometers
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     public static class RouteCustomerRow {

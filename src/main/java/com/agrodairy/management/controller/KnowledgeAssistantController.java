@@ -27,7 +27,7 @@ public class KnowledgeAssistantController {
     public void initialize() {
         if (categoryComboBox != null) {
             categoryComboBox.setItems(FXCollections.observableArrayList(
-                    "All Categories", "Milk Handling", "Paneer Care", "Boiling Technique", "Ghee Storage", "Troubleshooting", "Curd Making", "Nutrition Comparison", "Customer Support"
+                    "All Categories", "Milk Handling", "Paneer Care", "Boiling Technique", "Ghee Storage", "Troubleshooting", "Curd Storage", "Dairy Hygiene", "Cow Health", "Cattle Feeding", "Nutrition Comparison", "Customer Support"
             ));
             categoryComboBox.setValue("All Categories");
         }
