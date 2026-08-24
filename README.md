@@ -107,8 +107,8 @@ The system follows a strict layered Architecture:
    ```
 3. Update database credentials in `src/main/resources/config/database.properties` or system environment variables if different from default:
    - URL: `jdbc:mysql://localhost:3306/agro_dairy`
-   - User: `root`
-   - Password: `your_mysql_password`
+   - User: `name`
+   - Password: `mysql_password`
 
 ---
 
@@ -117,14 +117,14 @@ The system follows a strict layered Architecture:
 ### Running Maven Tests
 Execute full integration test suite:
 ```powershell
-& "C:\Users\Dhanshree\IntelliJ IDEA 2025.3.2\plugins\maven\lib\maven3\bin\mvn.cmd" test
+& "C:\Users\Dhansh\IntelliJ IDEA 2025.3.2\plugins\maven\lib\maven3\bin\mvn.cmd" test
 ```
 *(Or `mvn test` if `mvn` is added to system PATH)*
 
 ### Launching the JavaFX Application
 Launch application using JavaFX Maven plugin:
 ```powershell
-& "C:\Users\Dhanshree\IntelliJ IDEA 2025.3.2\plugins\maven\lib\maven3\bin\mvn.cmd" javafx:run
+& "C:\Users\Dhansh\IntelliJ IDEA 2025.3.2\plugins\maven\lib\maven3\bin\mvn.cmd" javafx:run
 ```
 *(Or `mvn javafx:run` if `mvn` is added to system PATH)*
 
@@ -136,10 +136,8 @@ The seed data provides pre-configured demo users for testing:
 
 | Role | Username | Default Password | Details |
 | :--- | :--- | :--- | :--- |
-| **Vendor** | `vendor_ramesh` | `Password123` | Ramesh Dairy Owner (Nagpur HQ) |
-| **Customer** | `cust_rahul` | `Password123` | Rahul Verma (Dharampeth, Nagpur) |
-| **Customer** | `cust_sunita` | `Password123` | Sunita Deshmukh (Pratap Nagar, Nagpur) |
-| **Customer** | `cust_mahesh` | `Password123` | Mahesh Patil (Sadar, Nagpur) |
+| **Vendor** | username | Password | details |
+| **Customer** | `username` | `Password` | details |
 
 ---
 
