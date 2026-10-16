@@ -800,7 +800,7 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                         }
                         return CompletableFuture.completedFuture(new HttpResponseWrapper(code, res.body()));
                     })
-                    .exceptionally(ex -> {
+                    .exceptionallyCompose(ex -> {
                         Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                         if ((cause instanceof HttpTimeoutException || cause instanceof IOException) && attempt < MAX_RETRIES) {
                             long delayMs = INITIAL_RETRY_DELAY_MS * (attempt + 1);
@@ -822,10 +822,10 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                         this.connectionStatus = AiConnectionStatus.ERROR;
                         this.statusDetails = "Network communication error: " + cause.getMessage();
                         if (cause instanceof HttpTimeoutException) {
-                            return new HttpResponseWrapper(408, "Request timed out after " + REQUEST_TIMEOUT.toSeconds()
-                                    + " seconds. Please verify your internet connection.");
+                            return CompletableFuture.completedFuture(new HttpResponseWrapper(408, "Request timed out after " + REQUEST_TIMEOUT.toSeconds()
+                                    + " seconds. Please verify your internet connection."));
                         }
-                        return new HttpResponseWrapper(500, "Network communication error: " + cause.getMessage());
+                        return CompletableFuture.completedFuture(new HttpResponseWrapper(500, "Network communication error: " + cause.getMessage()));
                     });
         } catch (Exception e) {
             logger.error("Error creating HTTP request to AI service", e);
