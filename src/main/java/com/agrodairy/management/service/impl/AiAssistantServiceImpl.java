@@ -42,11 +42,12 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     private static final Logger logger = LoggerFactory.getLogger(AiAssistantServiceImpl.class);
 
-    public static final String DEFAULT_GEMINI_MODEL = "gemini-3.8-flash";
+    public static final String DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+    public static final String FALLBACK_GEMINI_MODEL = "gemini-2.0-flash";
     public static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 
     private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
-    private static final String GEMINI_MODELS_LIST_URL = "https://generativelanguage.googleapis.com/v1beta/models?key=";
+    private static final String GEMINI_MODELS_URL = "https://generativelanguage.googleapis.com/v1beta/models";
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
     private static final String OPENAI_MODELS_URL = "https://api.openai.com/v1/models";
 
@@ -54,6 +55,8 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     private static final int MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB limit
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(15);
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(35);
+    private static final int MAX_RETRIES = 2; // Up to 2 retries (3 attempts total)
+    private static final long INITIAL_RETRY_DELAY_MS = 1000L;
 
     private String geminiApiKey;
     private String openAiApiKey;
@@ -219,9 +222,14 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             return;
         }
         String clean = sanitize(model);
-        // Automatically migrate deprecated 1.5-flash models to supported default
-        if (clean.equals("gemini-1.5-flash") || clean.contains("1.5-flash") || clean.equals("gemini-2.5flash")) {
-            logger.info("Migrated retired model identifier '{}' to active supported model '{}'", clean,
+        if (clean.startsWith("models/")) {
+            clean = clean.substring("models/".length()).trim();
+        }
+        // Automatically migrate deprecated, non-existent, or overloaded models to supported default
+        if (clean.equals("gemini-1.5-flash") || clean.contains("1.5-flash") ||
+                clean.equals("gemini-2.5flash") || clean.equals("gemini-3.8-flash") ||
+                clean.equals("gemini-3.8flash")) {
+            logger.info("Migrated retired/overloaded model identifier '{}' to active supported model '{}'", clean,
                     DEFAULT_GEMINI_MODEL);
             this.geminiModel = DEFAULT_GEMINI_MODEL;
         } else {
@@ -293,19 +301,49 @@ public class AiAssistantServiceImpl implements AiAssistantService {
         }
 
         if (geminiApiKey != null) {
-            String testUrl = GEMINI_MODELS_LIST_URL + geminiApiKey;
+            String testUrl = GEMINI_MODELS_URL;
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(testUrl))
                     .timeout(Duration.ofSeconds(10))
+                    .header("x-goog-api-key", geminiApiKey)
                     .GET()
                     .build();
 
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
                     .thenApply(response -> {
                         if (response.statusCode() == 200) {
-                            this.connectionStatus = AiConnectionStatus.CONNECTED;
-                            this.statusDetails = "Connection verified with Google Gemini API (" + geminiModel + ").";
-                            return true;
+                            String body = response.body();
+                            if (body != null && (body.contains("\"name\": \"models/" + geminiModel + "\"")
+                                    || body.contains("models/" + geminiModel))) {
+                                this.connectionStatus = AiConnectionStatus.CONNECTED;
+                                this.statusDetails = "Connection verified with Google Gemini API (" + geminiModel + ").";
+                                return true;
+                            } else if (body != null) {
+                                // Configured model was not found in supported models list - find best available
+                                String fallback = null;
+                                if (body.contains("models/" + DEFAULT_GEMINI_MODEL)) {
+                                    fallback = DEFAULT_GEMINI_MODEL;
+                                } else if (body.contains("models/" + FALLBACK_GEMINI_MODEL)) {
+                                    fallback = FALLBACK_GEMINI_MODEL;
+                                }
+
+                                if (fallback != null) {
+                                    logger.info("Configured model '{}' not found in available models; switching to supported '{}'",
+                                            geminiModel, fallback);
+                                    this.geminiModel = fallback;
+                                    this.connectionStatus = AiConnectionStatus.CONNECTED;
+                                    this.statusDetails = "Connection verified with Google Gemini API (" + geminiModel + ").";
+                                    return true;
+                                } else {
+                                    this.connectionStatus = AiConnectionStatus.ERROR;
+                                    this.statusDetails = "Verification warning: Model '" + geminiModel + "' not found in available models.";
+                                    return false;
+                                }
+                            } else {
+                                this.connectionStatus = AiConnectionStatus.CONNECTED;
+                                this.statusDetails = "Connection verified with Google Gemini API (" + geminiModel + ").";
+                                return true;
+                            }
                         } else {
                             this.connectionStatus = AiConnectionStatus.ERROR;
                             this.statusDetails = "Verification failed (HTTP " + response.statusCode() + "): " +
@@ -508,7 +546,7 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     // =========================================================================
 
     private CompletableFuture<String> callGeminiText(String systemInstruction, String userPrompt) {
-        String url = GEMINI_API_BASE + geminiModel + ":generateContent?key=" + geminiApiKey;
+        String url = GEMINI_API_BASE + geminiModel + ":generateContent";
         String jsonPayload = "{"
                 + "\"contents\": [{"
                 + "\"parts\": ["
@@ -518,11 +556,27 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 + "}";
 
         return executeHttpPost(url, jsonPayload, null)
-                .thenApply(this::parseGeminiResponse);
+                .thenCompose(response -> {
+                    if ((response.statusCode == 503 || response.statusCode == 404)
+                            && !geminiModel.equals(FALLBACK_GEMINI_MODEL)) {
+                        logger.warn("Gemini model '{}' returned HTTP {}. Retrying with fallback model '{}'...",
+                                geminiModel, response.statusCode, FALLBACK_GEMINI_MODEL);
+                        String fallbackUrl = GEMINI_API_BASE + FALLBACK_GEMINI_MODEL + ":generateContent";
+                        return executeHttpPost(fallbackUrl, jsonPayload, null)
+                                .thenApply(fallbackRes -> {
+                                    if (fallbackRes.statusCode == 200) {
+                                        this.geminiModel = FALLBACK_GEMINI_MODEL;
+                                        return parseGeminiResponse(fallbackRes);
+                                    }
+                                    return parseGeminiResponse(response);
+                                });
+                    }
+                    return CompletableFuture.completedFuture(parseGeminiResponse(response));
+                });
     }
 
     private CompletableFuture<String> callGeminiVision(String prompt, String mimeType, String base64Image) {
-        String url = GEMINI_API_BASE + geminiModel + ":generateContent?key=" + geminiApiKey;
+        String url = GEMINI_API_BASE + geminiModel + ":generateContent";
         String jsonPayload = "{"
                 + "\"contents\": [{"
                 + "\"parts\": ["
@@ -536,7 +590,23 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 + "}";
 
         return executeHttpPost(url, jsonPayload, null)
-                .thenApply(this::parseGeminiResponse);
+                .thenCompose(response -> {
+                    if ((response.statusCode == 503 || response.statusCode == 404)
+                            && !geminiModel.equals(FALLBACK_GEMINI_MODEL)) {
+                        logger.warn("Gemini vision model '{}' returned HTTP {}. Retrying with fallback model '{}'...",
+                                geminiModel, response.statusCode, FALLBACK_GEMINI_MODEL);
+                        String fallbackUrl = GEMINI_API_BASE + FALLBACK_GEMINI_MODEL + ":generateContent";
+                        return executeHttpPost(fallbackUrl, jsonPayload, null)
+                                .thenApply(fallbackRes -> {
+                                    if (fallbackRes.statusCode == 200) {
+                                        this.geminiModel = FALLBACK_GEMINI_MODEL;
+                                        return parseGeminiResponse(fallbackRes);
+                                    }
+                                    return parseGeminiResponse(response);
+                                });
+                    }
+                    return CompletableFuture.completedFuture(parseGeminiResponse(response));
+                });
     }
 
     public String parseGeminiResponse(HttpResponseWrapper response) {
@@ -557,8 +627,12 @@ public class AiAssistantServiceImpl implements AiAssistantService {
         if (body.contains("\"error\"")) {
             this.connectionStatus = AiConnectionStatus.ERROR;
             String msg = extractJsonStringField(body, "message");
-            this.statusDetails = "Gemini payload error: " + (msg != null ? msg : "Unknown");
-            return "⚠️ Gemini API Error: " + (msg != null ? msg : "Unknown error in API payload");
+            if (msg == null) msg = "Unknown error in API payload";
+            if (geminiApiKey != null && msg.contains(geminiApiKey)) {
+                msg = msg.replace(geminiApiKey, "[REDACTED_API_KEY]");
+            }
+            this.statusDetails = "Gemini payload error: " + msg;
+            return "⚠️ Gemini API Error: " + msg;
         }
 
         // Resilient multi-part extractor
@@ -684,6 +758,11 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     // =========================================================================
 
     private CompletableFuture<HttpResponseWrapper> executeHttpPost(String url, String jsonBody, String authHeader) {
+        return executeHttpPostWithRetry(url, jsonBody, authHeader, 0);
+    }
+
+    private CompletableFuture<HttpResponseWrapper> executeHttpPostWithRetry(
+            String url, String jsonBody, String authHeader, int attempt) {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -693,16 +772,54 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             if (authHeader != null) {
                 builder.header("Authorization", authHeader);
             }
+            if (geminiApiKey != null && url.contains("generativelanguage.googleapis.com")) {
+                builder.header("x-goog-api-key", geminiApiKey);
+            }
 
             HttpRequest request = builder.POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
                     .build();
 
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
-                    .thenApply(res -> new HttpResponseWrapper(res.statusCode(), res.body()))
+                    .thenCompose(res -> {
+                        int code = res.statusCode();
+                        if ((code == 503 || code == 429) && attempt < MAX_RETRIES) {
+                            long delayMs = INITIAL_RETRY_DELAY_MS * (attempt + 1);
+                            logger.warn("AI service returned HTTP {}. Retrying attempt {}/{} in {} ms...",
+                                    code, attempt + 1, MAX_RETRIES, delayMs);
+                            CompletableFuture<HttpResponseWrapper> delayedFuture = new CompletableFuture<>();
+                            CompletableFuture.delayedExecutor(delayMs, java.util.concurrent.TimeUnit.MILLISECONDS)
+                                    .execute(() -> executeHttpPostWithRetry(url, jsonBody, authHeader, attempt + 1)
+                                            .whenComplete((retryRes, retryEx) -> {
+                                                if (retryEx != null) {
+                                                    delayedFuture.completeExceptionally(retryEx);
+                                                } else {
+                                                    delayedFuture.complete(retryRes);
+                                                }
+                                            }));
+                            return delayedFuture;
+                        }
+                        return CompletableFuture.completedFuture(new HttpResponseWrapper(code, res.body()));
+                    })
                     .exceptionally(ex -> {
-                        logger.error("HTTP request to AI service failed", ex);
-                        this.connectionStatus = AiConnectionStatus.ERROR;
                         Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+                        if ((cause instanceof HttpTimeoutException || cause instanceof IOException) && attempt < MAX_RETRIES) {
+                            long delayMs = INITIAL_RETRY_DELAY_MS * (attempt + 1);
+                            logger.warn("AI service network issue ({}). Retrying attempt {}/{} in {} ms...",
+                                    cause.getClass().getSimpleName(), attempt + 1, MAX_RETRIES, delayMs);
+                            CompletableFuture<HttpResponseWrapper> delayedFuture = new CompletableFuture<>();
+                            CompletableFuture.delayedExecutor(delayMs, java.util.concurrent.TimeUnit.MILLISECONDS)
+                                    .execute(() -> executeHttpPostWithRetry(url, jsonBody, authHeader, attempt + 1)
+                                            .whenComplete((retryRes, retryEx) -> {
+                                                if (retryEx != null) {
+                                                    delayedFuture.completeExceptionally(retryEx);
+                                                } else {
+                                                    delayedFuture.complete(retryRes);
+                                                }
+                                            }));
+                            return delayedFuture;
+                        }
+                        logger.error("HTTP request to AI service failed after attempts", ex);
+                        this.connectionStatus = AiConnectionStatus.ERROR;
                         this.statusDetails = "Network communication error: " + cause.getMessage();
                         if (cause instanceof HttpTimeoutException) {
                             return new HttpResponseWrapper(408, "Request timed out after " + REQUEST_TIMEOUT.toSeconds()
@@ -725,6 +842,14 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             extractedMsg = body;
         }
 
+        // Mask any potential echoed key in error message
+        if (geminiApiKey != null && extractedMsg != null && extractedMsg.contains(geminiApiKey)) {
+            extractedMsg = extractedMsg.replace(geminiApiKey, "[REDACTED_API_KEY]");
+        }
+        if (openAiApiKey != null && extractedMsg != null && extractedMsg.contains(openAiApiKey)) {
+            extractedMsg = extractedMsg.replace(openAiApiKey, "[REDACTED_API_KEY]");
+        }
+
         String activeModel = provider.contains("Gemini") ? geminiModel : openAiModel;
 
         return switch (statusCode) {
@@ -739,16 +864,17 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             case 404 -> "⚠️ Model Not Found (HTTP 404): The model '" + activeModel + "' was not found on " + provider
                     + " for endpoint 'v1beta'.\n" +
                     "Details: " + extractedMsg + "\n" +
-                    "Note: Older models like gemini-1.5-flash are retired. Use a supported model such as 'gemini-2.5-flash' or 'gemini-3.8-flash'.";
+                    "Note: Deprecated models like gemini-1.5-flash are retired. Recommended active models: '" + DEFAULT_GEMINI_MODEL + "' or '" + FALLBACK_GEMINI_MODEL + "'.";
             case 408 ->
                 "⚠️ Request Timeout (HTTP 408): The AI service did not respond within the time limit. Please check your network.";
             case 429 -> "⚠️ Rate Limit Exceeded (HTTP 429): Quota or request limit reached on " + provider + ".\n" +
+                    "Details: " + extractedMsg + "\n" +
                     "Please wait a few moments or check your API billing/free quota tier.";
             case 500, 502,
                     503 ->
-                "⚠️ Service Unavailable (HTTP " + statusCode + "): " + provider + " is experiencing temporary issues.\n"
-                        +
-                        "Please try again in a few minutes.";
+                "⚠️ Service Unavailable (HTTP " + statusCode + "): " + provider + " servers are currently overloaded or experiencing high traffic.\n"
+                        + "Details: " + extractedMsg + "\n"
+                        + "Automatic retries were attempted. Please try again in a few moments, or check model status.";
             default -> "⚠️ AI Service Error (HTTP " + statusCode + "): " + extractedMsg;
         };
     }

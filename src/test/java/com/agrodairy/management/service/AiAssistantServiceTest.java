@@ -94,6 +94,42 @@ public class AiAssistantServiceTest {
         AiAssistantServiceImpl.HttpResponseWrapper res429 = new AiAssistantServiceImpl.HttpResponseWrapper(429, "{\"error\": {\"message\": \"RESOURCE_EXHAUSTED\"}}");
         String err429 = service.parseGeminiResponse(res429);
         assertTrue(err429.contains("Rate Limit") || err429.contains("429"));
+
+        // 503 Service Unavailable / Overloaded with retry notice
+        AiAssistantServiceImpl.HttpResponseWrapper res503 = new AiAssistantServiceImpl.HttpResponseWrapper(503, "{\"error\": {\"message\": \"The model is overloaded. Please try again later.\"}}");
+        String err503 = service.parseGeminiResponse(res503);
+        assertTrue(err503.contains("Service Unavailable") || err503.contains("503") || err503.contains("overloaded"));
+        assertTrue(err503.contains("retries"));
+
+        // 404 Model Not Found
+        AiAssistantServiceImpl.HttpResponseWrapper res404 = new AiAssistantServiceImpl.HttpResponseWrapper(404, "{\"error\": {\"message\": \"models/gemini-1.5-flash is not found\"}}");
+        String err404 = service.parseGeminiResponse(res404);
+        assertTrue(err404.contains("Model Not Found") || err404.contains("404"));
+
+        // API Key Redaction in error messages (never expose keys)
+        service.setGeminiApiKey("AIzaSySecretApiKey123");
+        AiAssistantServiceImpl.HttpResponseWrapper resLeak = new AiAssistantServiceImpl.HttpResponseWrapper(400, "{\"error\": {\"message\": \"Key AIzaSySecretApiKey123 is invalid\"}}");
+        String errLeak = service.parseGeminiResponse(resLeak);
+        assertFalse(errLeak.contains("AIzaSySecretApiKey123"), "API key must never be exposed in error messages");
+        assertTrue(errLeak.contains("[REDACTED_API_KEY]"), "Leaked key must be replaced with redacted token");
+    }
+
+    @Test
+    @DisplayName("Verify overloaded or deprecated models migrate cleanly to supported active model")
+    public void testModelMigration() {
+        AiAssistantServiceImpl service = new AiAssistantServiceImpl(null, null);
+
+        // Migrate gemini-3.8-flash (which causes 503 overloaded error)
+        service.setGeminiModel("gemini-3.8-flash");
+        assertEquals(AiAssistantServiceImpl.DEFAULT_GEMINI_MODEL, service.getGeminiModel());
+
+        // Migrate gemini-1.5-flash (which causes 404 model not found)
+        service.setGeminiModel("gemini-1.5-flash");
+        assertEquals(AiAssistantServiceImpl.DEFAULT_GEMINI_MODEL, service.getGeminiModel());
+
+        // Strip leading models/ prefix
+        service.setGeminiModel("models/gemini-2.0-flash");
+        assertEquals("gemini-2.0-flash", service.getGeminiModel());
     }
 
     @Test
