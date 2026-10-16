@@ -75,6 +75,19 @@ public class UserLoginDAOImpl implements UserLoginDAO {
     }
 
     @Override
+    public boolean updateStatus(Long userId, boolean isActive) {
+        String sql = "UPDATE users SET is_active = ? WHERE user_id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isActive);
+            stmt.setLong(2, userId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to update user status: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public Optional<UserLogin> findById(Long userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
         try (Connection conn = DatabaseUtil.getConnection();

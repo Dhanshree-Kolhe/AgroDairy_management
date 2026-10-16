@@ -17,7 +17,7 @@
 - `full_name` (VARCHAR(100))
 - `email` (VARCHAR(100), Unique)
 - `phone` (VARCHAR(20))
-- `role` (ENUM: `'VENDOR'`, `'CUSTOMER'`)
+- `role` (ENUM: `'ADMIN'`, `'VENDOR'`, `'CUSTOMER'`)
 - `is_active` (BOOLEAN)
 - `created_at`, `updated_at` (TIMESTAMP)
 

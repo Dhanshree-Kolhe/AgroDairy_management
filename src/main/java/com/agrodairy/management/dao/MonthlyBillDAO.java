@@ -11,6 +11,9 @@ public interface MonthlyBillDAO {
     Long insert(MonthlyBill bill);
     boolean update(MonthlyBill bill);
     boolean updatePaidAmountAndStatus(Long billId, BigDecimal newPaidAmount, PaymentStatus status);
+    default boolean updatePaidAmountAndStatus(Long billId, BigDecimal newPaidAmount, PaymentStatus status, java.sql.Connection conn) {
+        return updatePaidAmountAndStatus(billId, newPaidAmount, status);
+    }
     Optional<MonthlyBill> findById(Long billId);
     Optional<MonthlyBill> findByBillNumber(String billNumber);
     Optional<MonthlyBill> findByCustomerAndPeriod(Long customerId, int month, int year);

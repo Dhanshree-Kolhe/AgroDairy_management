@@ -15,9 +15,17 @@ public class PaymentDAOImpl implements PaymentDAO {
 
     @Override
     public Long insert(Payment payment) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            return insert(payment, conn);
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to acquire connection for payment insert: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Long insert(Payment payment, Connection conn) {
         String sql = "INSERT INTO payments (bill_id, customer_id, amount_paid, payment_date, payment_mode, transaction_reference, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setLong(1, payment.getBillId());
             stmt.setLong(2, payment.getCustomerId());
             stmt.setBigDecimal(3, payment.getAmountPaid());
@@ -40,6 +48,27 @@ public class PaymentDAOImpl implements PaymentDAO {
             }
         } catch (SQLException e) {
             throw new DatabaseException("Failed to insert payment record: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean updateStatus(Long paymentId, String status) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            return updateStatus(paymentId, status, conn);
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to acquire connection for payment status update: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean updateStatus(Long paymentId, String status, Connection conn) {
+        String sql = "UPDATE payments SET status = ? WHERE payment_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setLong(2, paymentId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to update payment status: " + e.getMessage(), e);
         }
     }
 

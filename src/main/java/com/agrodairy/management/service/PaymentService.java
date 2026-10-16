@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface PaymentService {
     Payment recordPayment(Long billId, Long customerId, BigDecimal amountPaid, Date paymentDate, PaymentMode mode, String reference);
+    Payment recordPendingPayment(Long billId, Long customerId, BigDecimal amountPaid, Date paymentDate, PaymentMode mode, String reference);
+    boolean verifyPayment(Long paymentId);
     Payment getPaymentById(Long paymentId);
     List<Payment> getPaymentsByBill(Long billId);
     List<Payment> getPaymentsByCustomer(Long customerId);

@@ -40,7 +40,6 @@ com\agrodairy\management\service\impl\ExtraOrderServiceImpl.class
 com\agrodairy\management\controller\CustomerManagementController.class
 com\agrodairy\management\controller\DailyDeliveriesController.class
 com\agrodairy\management\controller\CustomerBillsController.class
-com\agrodairy\management\controller\KnowledgeAssistantController.class
 com\agrodairy\management\dao\impl\VendorDAOImpl.class
 com\agrodairy\management\service\CustomerService.class
 com\agrodairy\management\controller\ExtraOrdersController.class

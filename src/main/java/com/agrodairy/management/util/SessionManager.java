@@ -36,6 +36,10 @@ public class SessionManager {
         return currentUser != null;
     }
 
+    public static synchronized boolean isAdmin() {
+        return currentUser != null && currentUser.getRole() == Role.ADMIN;
+    }
+
     public static synchronized boolean isVendor() {
         return currentUser != null && currentUser.getRole() == Role.VENDOR;
     }

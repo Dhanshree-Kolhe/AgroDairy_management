@@ -6,11 +6,18 @@ The **Smart Dairy Management System** is a professional desktop application desi
 ## Key Modules & Features
 
 ### 1. Authentication & Security Module
-- **Role-based Access Control (RBAC)**: Distinguishes between `VENDOR` and `CUSTOMER` roles.
+- **Role-based Access Control (RBAC)**: Distinguishes between `ADMIN`, `VENDOR`, and `CUSTOMER` roles with strict route and permission separation.
 - **Secure Password Hashing**: Utilizes BCrypt hashing algorithm (`jbcrypt`) for password storage and verification.
-- **Session Management**: Thread-safe `SessionManager` for maintaining authenticated user state.
+- **Session Management**: Thread-safe `SessionManager` for maintaining authenticated user state with `isAdmin()`, `isVendor()`, and `isCustomer()` guards.
+- **Inactive Account Protection**: Blocks login for accounts marked `is_active = FALSE`.
 
-### 2. Vendor Operations Module
+### 2. Administration & Executive Module
+- **Executive Dashboard**: Dynamic metrics for total platform users, active vendors, active customers, active catalog products, and verified non-duplicated total revenue.
+- **User Directory & Access Control**: Real-time searchable and filterable user account table with one-click Activate/Deactivate actions, self-deactivation protection, and last-admin preservation.
+- **Master Product Catalog**: Read-only centralized catalog of standardized dairy items, units, pricing, and live inventory levels.
+- **Live System Health & Diagnostics**: Real-time diagnostics for MySQL connection status, ping latency (ms), HikariCP pool health, JVM heap memory usage, and repository data verification.
+
+### 3. Vendor Operations Module
 - **Dashboard & Key Metrics**: High-level statistics on active customer subscriptions, daily milk volume delivered, pending extra product orders, and total revenue collected.
 - **Customer Management**: CRUD operations for managing customer profiles, geographic coordinates (latitude & longitude), delivery shifts, and milk rates per liter.
 - **Daily Shift Delivery Management**: Record morning and evening shift deliveries turn-by-turn. Preserves immutable price snapshots at the time of delivery.

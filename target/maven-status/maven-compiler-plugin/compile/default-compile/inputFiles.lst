@@ -1,6 +1,11 @@
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\App.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\config\AppConstants.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\config\DatabaseConfig.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\AdminDashboardController.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\AdminMainLayoutController.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\AdminProductsController.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\AdminSystemStatusController.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\AdminUsersController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\BillingController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\CustomerBillsController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\CustomerDashboardController.java
@@ -9,6 +14,7 @@ C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrod
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\CustomerHolidayController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\CustomerMainLayoutController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\CustomerManagementController.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\CustomerPaymentDialogController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\DailyDeliveriesController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\ExtraOrdersController.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\controller\HolidayRequestsController.java
@@ -61,8 +67,10 @@ C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrod
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\exception\ValidationException.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\Customer.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\DeliveryRecord.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\AiConnectionStatus.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\DeliveryShift.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\DeliveryStatus.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\ImageAnalysisCategory.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\MilkType.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\NotificationCategory.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\enums\PaymentMode.java
@@ -83,6 +91,7 @@ C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrod
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\User.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\UserLogin.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\model\Vendor.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\AiAssistantService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\AuthService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\BillingService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\CloudBackupService.java
@@ -90,6 +99,7 @@ C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrod
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\DeliveryService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\ExtraOrderService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\HolidayRequestService.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\AiAssistantServiceImpl.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\AuthServiceImpl.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\BillingServiceImpl.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\CustomerServiceImpl.java
@@ -101,10 +111,14 @@ C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrod
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\KnowledgeAssistantServiceImpl.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\NotificationServiceImpl.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\PaymentServiceImpl.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\ProductServiceImpl.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\impl\VendorServiceImpl.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\InventoryService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\KnowledgeAssistantService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\NotificationService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\PaymentService.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\ProductService.java
+C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\service\VendorService.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\util\AlertUtils.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\util\DatabaseUtil.java
 C:\Users\Dhanshree\OneDrive\Desktop\AgroDairy_management\src\main\java\com\agrodairy\management\util\ExcelReportExporter.java

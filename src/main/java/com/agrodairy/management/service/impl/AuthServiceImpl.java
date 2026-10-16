@@ -8,10 +8,19 @@ import com.agrodairy.management.model.UserLogin;
 import com.agrodairy.management.model.enums.Role;
 import com.agrodairy.management.service.AuthService;
 import com.agrodairy.management.util.PasswordUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+/**
+ * Production implementation of AuthService enforcing strict database authentication,
+ * BCrypt password hashing, and active account status validation.
+ * No hardcoded credentials or bypass fallbacks.
+ */
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
     private final UserLoginDAO userLoginDAO;
 
     public AuthServiceImpl() {
@@ -32,66 +41,35 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String uName = username.trim();
-        Optional<UserLogin> userOpt = Optional.empty();
+        Optional<UserLogin> userOpt;
         try {
             userOpt = userLoginDAO.findByUsername(uName);
         } catch (Exception e) {
-            // DB connection offline or uninitialized
+            logger.error("Database connection error while retrieving user: {}", uName, e);
+            throw new AuthenticationException("Authentication service is currently unavailable. Please verify database connectivity.");
         }
 
         if (userOpt.isEmpty()) {
-            UserLogin demo = getDemoUserFallback(uName, plainPassword);
-            if (demo != null) return demo;
+            logger.warn("Authentication failed: User '{}' not found in database.", uName);
             throw new AuthenticationException("Invalid username or password.");
         }
 
         UserLogin user = userOpt.get();
+
+        // 1. Enforce Account Status: Inactive users are strictly blocked from logging in
         if (Boolean.FALSE.equals(user.getActive())) {
+            logger.warn("Authentication rejected: User account '{}' is marked inactive.", uName);
             throw new AuthenticationException("User account is inactive. Please contact system administrator.");
         }
 
+        // 2. Enforce BCrypt password verification against stored database hash
         if (!PasswordUtil.checkPassword(plainPassword, user.getPasswordHash())) {
-            UserLogin demo = getDemoUserFallback(uName, plainPassword);
-            if (demo != null) return demo;
+            logger.warn("Authentication failed: Password mismatch for user '{}'.", uName);
             throw new AuthenticationException("Invalid username or password.");
         }
 
+        logger.info("Authentication successful for user '{}' with role '{}'.", user.getUsername(), user.getRole());
         return user;
-    }
-
-    private UserLogin getDemoUserFallback(String username, String password) {
-        boolean validPass = "secret123".equals(password) || "Password123".equals(password);
-        if (!validPass) return null;
-
-        if ("vendor_ramesh".equalsIgnoreCase(username)) {
-            UserLogin u = new UserLogin();
-            u.setUserId(1L);
-            u.setUsername("vendor_ramesh");
-            u.setPasswordHash(PasswordUtil.hashPassword("secret123"));
-            u.setFullName("Ramesh Dairy Farm Owner");
-            u.setRole(Role.VENDOR);
-            u.setActive(true);
-            return u;
-        } else if ("cust_rahul".equalsIgnoreCase(username) || "rahul_v".equalsIgnoreCase(username)) {
-            UserLogin u = new UserLogin();
-            u.setUserId(2L);
-            u.setUsername("cust_rahul");
-            u.setPasswordHash(PasswordUtil.hashPassword("secret123"));
-            u.setFullName("Rahul Verma");
-            u.setRole(Role.CUSTOMER);
-            u.setActive(true);
-            return u;
-        } else if ("cust_sunita".equalsIgnoreCase(username)) {
-            UserLogin u = new UserLogin();
-            u.setUserId(3L);
-            u.setUsername("cust_sunita");
-            u.setPasswordHash(PasswordUtil.hashPassword("secret123"));
-            u.setFullName("Sunita Deshmukh");
-            u.setRole(Role.CUSTOMER);
-            u.setActive(true);
-            return u;
-        }
-        return null;
     }
 
     @Override

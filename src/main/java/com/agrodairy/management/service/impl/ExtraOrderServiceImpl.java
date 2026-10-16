@@ -83,7 +83,16 @@ public class ExtraOrderServiceImpl implements ExtraOrderService {
         // Deduct inventory quantity upon approval
         inventoryService.reduceStock(order.getProductId(), order.getQuantity());
 
-        extraOrderDAO.updateStatus(orderId, RequestStatus.APPROVED);
+        try {
+            extraOrderDAO.updateStatus(orderId, RequestStatus.APPROVED);
+        } catch (Exception e) {
+            // Compensate stock if DB status update fails to prevent stock leakage
+            try {
+                inventoryService.addStock(order.getProductId(), order.getQuantity());
+            } catch (Exception ignored) {}
+            throw e;
+        }
+
         order.setStatus(RequestStatus.APPROVED);
         return order;
     }
@@ -91,6 +100,10 @@ public class ExtraOrderServiceImpl implements ExtraOrderService {
     @Override
     public ExtraOrder rejectOrder(Long orderId) {
         ExtraOrder order = getOrderById(orderId);
+        if (order.getStatus() == RequestStatus.APPROVED) {
+            // Refund reserved stock if rejecting an already approved order
+            inventoryService.addStock(order.getProductId(), order.getQuantity());
+        }
         extraOrderDAO.updateStatus(orderId, RequestStatus.REJECTED);
         order.setStatus(RequestStatus.REJECTED);
         return order;

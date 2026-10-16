@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="16.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.AdminUsersController">
+   <padding>
+      <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+   </padding>
+   <children>
+      <!-- Page Header -->
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <VBox>
+               <children>
+                  <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0F172A;" text="User Access Management" />
+                  <Label style="-fx-text-fill: #64748B; -fx-font-size: 13px;" text="Inspect user accounts, filter by role/status, and securely activate or deactivate platform access." />
+               </children>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="userCountBadge" style="-fx-background-color: #EDE9FE; -fx-text-fill: #6D28D9; -fx-padding: 6 12; -fx-background-radius: 20; -fx-font-weight: bold; -fx-font-size: 12px;" text="Loading accounts..." />
+         </children>
+      </HBox>
+
+      <!-- Filter and Search Toolbar -->
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 14; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 6, 0, 0, 2);">
+         <children>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Search:" />
+            <TextField fx:id="searchField" prefWidth="250.0" promptText="Filter by username, name, email..." />
+            
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Role:">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="roleFilterCombo" prefWidth="130.0" />
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Status:">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="statusFilterCombo" prefWidth="130.0" />
+
+            <Button onAction="#handleResetFilters" styleClass="btn-secondary" text="Clear Filters" />
+
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#loadUsers" styleClass="btn-primary" text="🔄 Refresh" />
+         </children>
+      </HBox>
+
+      <!-- Users Table -->
+      <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="colUserId" prefWidth="70.0" text="User ID" />
+            <TableColumn fx:id="colUsername" prefWidth="150.0" text="Username" />
+            <TableColumn fx:id="colFullName" prefWidth="210.0" text="Full Name" />
+            <TableColumn fx:id="colRole" prefWidth="120.0" text="Role" />
+            <TableColumn fx:id="colEmail" prefWidth="210.0" text="Email Address" />
+            <TableColumn fx:id="colPhone" prefWidth="140.0" text="Phone Number" />
+            <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+         </columns>
+         <placeholder>
+            <Label style="-fx-text-fill: #64748B; -fx-font-size: 14px;" text="No user accounts match current search and filter criteria." />
+         </placeholder>
+      </TableView>
+
+      <!-- Action Footer -->
+      <HBox alignment="CENTER_RIGHT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 14; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 6, 0, 0, 2);">
+         <children>
+            <Label style="-fx-text-fill: #64748B; -fx-font-size: 12px;" text="Select an account row to update status:" />
+            <Button onAction="#handleActivateUser" styleClass="btn-success" text="✔ ACTIVATE ACCOUNT" />
+            <Button onAction="#handleDeactivateUser" styleClass="btn-danger" text="✖ DEACTIVATE ACCOUNT" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

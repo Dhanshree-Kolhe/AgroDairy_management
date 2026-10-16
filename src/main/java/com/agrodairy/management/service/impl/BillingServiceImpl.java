@@ -22,6 +22,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import com.agrodairy.management.dao.PaymentDAO;
+import com.agrodairy.management.dao.impl.PaymentDAOImpl;
+import com.agrodairy.management.model.Payment;
 import java.util.Optional;
 
 public class BillingServiceImpl implements BillingService {
@@ -29,12 +32,14 @@ public class BillingServiceImpl implements BillingService {
     private final CustomerDAO customerDAO;
     private final DeliveryService deliveryService;
     private final ExtraOrderDAO extraOrderDAO;
+    private final PaymentDAO paymentDAO;
 
     public BillingServiceImpl() {
         this.monthlyBillDAO = new MonthlyBillDAOImpl();
         this.customerDAO = new CustomerDAOImpl();
         this.deliveryService = new DeliveryServiceImpl();
         this.extraOrderDAO = new ExtraOrderDAOImpl();
+        this.paymentDAO = new PaymentDAOImpl();
     }
 
     public BillingServiceImpl(MonthlyBillDAO monthlyBillDAO, CustomerDAO customerDAO, DeliveryService deliveryService, ExtraOrderDAO extraOrderDAO) {
@@ -42,6 +47,15 @@ public class BillingServiceImpl implements BillingService {
         this.customerDAO = customerDAO;
         this.deliveryService = deliveryService;
         this.extraOrderDAO = extraOrderDAO;
+        this.paymentDAO = new PaymentDAOImpl();
+    }
+
+    public BillingServiceImpl(MonthlyBillDAO monthlyBillDAO, CustomerDAO customerDAO, DeliveryService deliveryService, ExtraOrderDAO extraOrderDAO, PaymentDAO paymentDAO) {
+        this.monthlyBillDAO = monthlyBillDAO;
+        this.customerDAO = customerDAO;
+        this.deliveryService = deliveryService;
+        this.extraOrderDAO = extraOrderDAO;
+        this.paymentDAO = paymentDAO;
     }
 
     @Override
@@ -89,6 +103,12 @@ public class BillingServiceImpl implements BillingService {
         BigDecimal paidAmount = BigDecimal.ZERO;
         BigDecimal balanceDue = netPayable;
 
+        PaymentStatus status = PaymentStatus.UNPAID;
+        if (netPayable.compareTo(BigDecimal.ZERO) <= 0) {
+            status = PaymentStatus.PAID;
+            balanceDue = BigDecimal.ZERO;
+        }
+
         YearMonth billingPeriod = YearMonth.of(year, month);
         LocalDate lastDayOfMonth = billingPeriod.atEndOfMonth();
         LocalDate dueLocalDate = lastDayOfMonth.plusDays(10); // 10 days grace period
@@ -109,7 +129,7 @@ public class BillingServiceImpl implements BillingService {
         bill.setNetPayable(netPayable);
         bill.setPaidAmount(paidAmount);
         bill.setBalanceDue(balanceDue);
-        bill.setStatus(PaymentStatus.UNPAID);
+        bill.setStatus(status);
         bill.setBillDate(Date.valueOf(lastDayOfMonth));
         bill.setDueDate(Date.valueOf(dueLocalDate));
 
@@ -121,31 +141,41 @@ public class BillingServiceImpl implements BillingService {
     @Override
     public MonthlyBill getCustomerMonthlyBill(Long customerId, int month, int year) {
         if (customerId == null || customerId <= 0) throw new ValidationException("Invalid customer ID.");
-        return monthlyBillDAO.findByCustomerAndPeriod(customerId, month, year)
+        MonthlyBill bill = monthlyBillDAO.findByCustomerAndPeriod(customerId, month, year)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Bill not found for customer %d period %02d/%d", customerId, month, year)));
+        reconcileBillState(bill);
+        return bill;
     }
 
     @Override
     public List<MonthlyBill> getCustomerBillHistory(Long customerId) {
         if (customerId == null || customerId <= 0) throw new ValidationException("Invalid customer ID.");
-        return monthlyBillDAO.findByCustomer(customerId);
+        List<MonthlyBill> bills = monthlyBillDAO.findByCustomer(customerId);
+        bills.forEach(this::reconcileBillState);
+        return bills;
     }
 
     @Override
     public List<MonthlyBill> getMonthlyBillsByPeriod(int month, int year) {
         if (month < 1 || month > 12) throw new ValidationException("Invalid month.");
-        return monthlyBillDAO.findByPeriod(month, year);
+        List<MonthlyBill> bills = monthlyBillDAO.findByPeriod(month, year);
+        bills.forEach(this::reconcileBillState);
+        return bills;
     }
 
     @Override
     public List<MonthlyBill> getPendingBills() {
-        return monthlyBillDAO.findPendingBills();
+        List<MonthlyBill> bills = monthlyBillDAO.findPendingBills();
+        bills.forEach(this::reconcileBillState);
+        return bills.stream()
+                .filter(b -> b.getStatus() != PaymentStatus.PAID && b.getBalanceDue().compareTo(BigDecimal.ZERO) > 0)
+                .toList();
     }
 
     @Override
     public BigDecimal getOutstandingBalance(Long customerId) {
         if (customerId == null || customerId <= 0) throw new ValidationException("Invalid customer ID.");
-        List<MonthlyBill> bills = monthlyBillDAO.findByCustomer(customerId);
+        List<MonthlyBill> bills = getCustomerBillHistory(customerId);
         return bills.stream()
                 .map(MonthlyBill::getBalanceDue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
@@ -185,7 +215,7 @@ public class BillingServiceImpl implements BillingService {
         BigDecimal balanceDue = netPayable.subtract(bill.getPaidAmount()).setScale(2, RoundingMode.HALF_UP);
 
         PaymentStatus status = PaymentStatus.UNPAID;
-        if (balanceDue.compareTo(BigDecimal.ZERO) <= 0) {
+        if (netPayable.compareTo(BigDecimal.ZERO) <= 0 || balanceDue.compareTo(BigDecimal.ZERO) <= 0) {
             status = PaymentStatus.PAID;
             balanceDue = BigDecimal.ZERO;
         } else if (bill.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -202,6 +232,42 @@ public class BillingServiceImpl implements BillingService {
 
         monthlyBillDAO.update(bill);
         return bill;
+    }
+
+    public void reconcileBillState(MonthlyBill bill) {
+        if (bill == null) return;
+        if (bill.getNetPayable() == null) bill.setNetPayable(BigDecimal.ZERO);
+        if (bill.getPaidAmount() == null) bill.setPaidAmount(BigDecimal.ZERO);
+        if (bill.getBalanceDue() == null) bill.setBalanceDue(bill.getNetPayable().subtract(bill.getPaidAmount()));
+
+        if (paymentDAO != null && bill.getBillId() != null) {
+            try {
+                List<Payment> payments = paymentDAO.findByBillId(bill.getBillId());
+                BigDecimal verifiedPaid = payments.stream()
+                        .filter(p -> "SUCCESS".equalsIgnoreCase(p.getStatus()))
+                        .map(Payment::getAmountPaid)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                if (verifiedPaid.compareTo(BigDecimal.ZERO) > 0) {
+                    bill.setPaidAmount(verifiedPaid);
+                }
+            } catch (Exception ignored) {}
+        }
+
+        BigDecimal net = bill.getNetPayable();
+        BigDecimal paid = bill.getPaidAmount();
+        BigDecimal due = net.subtract(paid).setScale(2, RoundingMode.HALF_UP);
+
+        if (net.compareTo(BigDecimal.ZERO) <= 0 || due.compareTo(BigDecimal.ZERO) <= 0) {
+            bill.setBalanceDue(BigDecimal.ZERO);
+            bill.setStatus(PaymentStatus.PAID);
+        } else if (paid.compareTo(BigDecimal.ZERO) > 0) {
+            bill.setBalanceDue(due);
+            bill.setStatus(PaymentStatus.PARTIAL);
+        } else {
+            bill.setBalanceDue(due);
+            bill.setStatus(PaymentStatus.UNPAID);
+        }
     }
 
     private BigDecimal getPreviousBalanceForPeriod(Long customerId, int currentMonth, int currentYear) {

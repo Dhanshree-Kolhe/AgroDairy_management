@@ -78,9 +78,17 @@ public class MonthlyBillDAOImpl implements MonthlyBillDAO {
 
     @Override
     public boolean updatePaidAmountAndStatus(Long billId, BigDecimal newPaidAmount, PaymentStatus status) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            return updatePaidAmountAndStatus(billId, newPaidAmount, status, conn);
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to acquire connection for bill payment update: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean updatePaidAmountAndStatus(Long billId, BigDecimal newPaidAmount, PaymentStatus status, Connection conn) {
         String sql = "UPDATE monthly_bills SET paid_amount = ?, balance_due = (net_payable - ?), status = ? WHERE bill_id = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setBigDecimal(1, newPaidAmount);
             stmt.setBigDecimal(2, newPaidAmount);
             stmt.setString(3, status.name());

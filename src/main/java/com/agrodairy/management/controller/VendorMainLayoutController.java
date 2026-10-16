@@ -26,8 +26,16 @@ public class VendorMainLayoutController {
     @FXML private Button navNotificationsBtn;
     @FXML private Button navKnowledgeBtn;
 
+    private Button currentActiveBtn;
+
     @FXML
     public void initialize() {
+        if (!SessionManager.isVendor()) {
+            com.agrodairy.management.util.AlertUtils.showError("Access Denied", "Vendor privileges are required to access this portal.");
+            handleLogout();
+            return;
+        }
+
         NavigationManager.setMainLayoutPane(mainBorderPane);
         UserLogin user = SessionManager.getCurrentUser();
         if (user != null && userWelcomeLabel != null) {
@@ -38,61 +46,61 @@ public class VendorMainLayoutController {
 
     @FXML
     public void handleNavDashboard() {
-        setPageTitle("Vendor Overview Dashboard");
+        setActiveNav(navDashboardBtn, "Vendor Overview Dashboard");
         NavigationManager.loadCenterView("/fxml/vendor/VendorDashboardView.fxml");
     }
 
     @FXML
     public void handleNavCustomers() {
-        setPageTitle("Customer Directory & Management");
+        setActiveNav(navCustomersBtn, "Customer Directory & Management");
         NavigationManager.loadCenterView("/fxml/vendor/CustomerManagementView.fxml");
     }
 
     @FXML
     public void handleNavDeliveries() {
-        setPageTitle("Daily Shift Milk Deliveries");
+        setActiveNav(navDeliveriesBtn, "Daily Shift Milk Deliveries");
         NavigationManager.loadCenterView("/fxml/vendor/DailyDeliveriesView.fxml");
     }
 
     @FXML
     public void handleNavBilling() {
-        setPageTitle("Monthly Billing & Payment Collection");
+        setActiveNav(navBillingBtn, "Monthly Billing & Payment Collection");
         NavigationManager.loadCenterView("/fxml/vendor/BillingView.fxml");
     }
 
     @FXML
     public void handleNavInventory() {
-        setPageTitle("Dairy Inventory & Product Stock");
+        setActiveNav(navInventoryBtn, "Dairy Inventory & Product Stock");
         NavigationManager.loadCenterView("/fxml/vendor/InventoryView.fxml");
     }
 
     @FXML
     public void handleNavExtraOrders() {
-        setPageTitle("Customer Extra Product Orders");
+        setActiveNav(navExtraOrdersBtn, "Customer Extra Product Orders");
         NavigationManager.loadCenterView("/fxml/vendor/ExtraOrdersView.fxml");
     }
 
     @FXML
     public void handleNavHolidays() {
-        setPageTitle("Customer Delivery Pause Requests");
+        setActiveNav(navHolidaysBtn, "Customer Delivery Pause Requests");
         NavigationManager.loadCenterView("/fxml/vendor/HolidayRequestsView.fxml");
     }
 
     @FXML
     public void handleNavRoutePlanner() {
-        setPageTitle("Nagpur Doorstep Delivery Route Planner");
+        setActiveNav(navRoutePlannerBtn, "Nagpur Doorstep Delivery Route Planner");
         NavigationManager.loadCenterView("/fxml/vendor/RoutePlannerView.fxml");
     }
 
     @FXML
     public void handleNavNotifications() {
-        setPageTitle("System Alerts & Notifications");
+        setActiveNav(navNotificationsBtn, "System Alerts & Notifications");
         NavigationManager.loadCenterView("/fxml/vendor/NotificationsView.fxml");
     }
 
     @FXML
     public void handleNavKnowledge() {
-        setPageTitle("Offline Dairy Knowledge Assistant");
+        setActiveNav(navKnowledgeBtn, "Dairy Knowledge & AI Vision Assistant");
         NavigationManager.loadCenterView("/fxml/common/KnowledgeAssistantView.fxml");
     }
 
@@ -102,9 +110,19 @@ public class VendorMainLayoutController {
         NavigationManager.switchScene("/fxml/auth/LoginView.fxml", "Login");
     }
 
-    private void setPageTitle(String title) {
+    private void setActiveNav(Button btn, String title) {
         if (pageTitleLabel != null) {
             pageTitleLabel.setText(title);
+        }
+
+        if (currentActiveBtn != null) {
+            currentActiveBtn.getStyleClass().remove("active");
+        }
+        if (btn != null) {
+            if (!btn.getStyleClass().contains("active")) {
+                btn.getStyleClass().add("active");
+            }
+            currentActiveBtn = btn;
         }
     }
 }

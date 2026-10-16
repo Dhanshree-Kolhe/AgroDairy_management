@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="16.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.agrodairy.management.controller.AdminProductsController">
+   <padding>
+      <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+   </padding>
+   <children>
+      <!-- Page Header -->
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <VBox>
+               <children>
+                  <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0F172A;" text="Master Dairy Products Catalog" />
+                  <Label style="-fx-text-fill: #64748B; -fx-font-size: 13px;" text="Read-only catalog of standardized dairy items, pricing, units of measurement, and current inventory levels." />
+               </children>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="productCountBadge" style="-fx-background-color: #DBEAFE; -fx-text-fill: #1E40AF; -fx-padding: 6 12; -fx-background-radius: 20; -fx-font-weight: bold; -fx-font-size: 12px;" text="Loading products..." />
+         </children>
+      </HBox>
+
+      <!-- Filter and Search Toolbar -->
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-padding: 14; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 6, 0, 0, 2);">
+         <children>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Search:" />
+            <TextField fx:id="searchField" prefWidth="250.0" promptText="Filter by product name or code..." />
+            
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Category:">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="categoryFilterCombo" prefWidth="160.0" />
+
+            <Button onAction="#handleResetFilters" styleClass="btn-secondary" text="Clear Filters" />
+
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#loadProducts" styleClass="btn-primary" text="🔄 Refresh Catalog" />
+         </children>
+      </HBox>
+
+      <!-- Products Table -->
+      <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="colProductId" prefWidth="70.0" text="ID" />
+            <TableColumn fx:id="colProductCode" prefWidth="120.0" text="Code" />
+            <TableColumn fx:id="colProductName" prefWidth="240.0" text="Product Name" />
+            <TableColumn fx:id="colCategory" prefWidth="160.0" text="Category" />
+            <TableColumn fx:id="colUnit" prefWidth="120.0" text="Standard Unit" />
+            <TableColumn fx:id="colPrice" prefWidth="130.0" text="Base Price" />
+            <TableColumn fx:id="colStock" prefWidth="150.0" text="Current Stock" />
+            <TableColumn fx:id="colStatus" prefWidth="110.0" text="Status" />
+         </columns>
+         <placeholder>
+            <Label style="-fx-text-fill: #64748B; -fx-font-size: 14px;" text="No products found in the catalog." />
+         </placeholder>
+      </TableView>
+
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #F8FAFC; -fx-padding: 10 15; -fx-background-radius: 8;">
+         <children>
+            <Label style="-fx-text-fill: #64748B; -fx-font-size: 12px;" text="ℹ Note: This administrative product view is read-only. Dairy vendors manage daily inventory restocking and order fulfillments." />
+         </children>
+      </HBox>
+   </children>
+</VBox>

@@ -36,7 +36,7 @@ CREATE TABLE users (
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
     phone VARCHAR(20) NOT NULL,
-    role ENUM('VENDOR', 'CUSTOMER') NOT NULL,
+    role ENUM('VENDOR', 'CUSTOMER', 'ADMIN') NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -276,7 +276,8 @@ INSERT INTO users (username, password_hash, full_name, email, phone, role) VALUE
 ('cust_priya',    '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Priya Nair', 'priya@gmail.com', '9876500007', 'CUSTOMER'),
 ('cust_amit',     '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Amit Shah', 'amit@gmail.com', '9876500008', 'CUSTOMER'),
 ('cust_pooja',    '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Pooja Mehta', 'pooja@gmail.com', '9876500009', 'CUSTOMER'),
-('cust_rajesh',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Rajesh Pawar', 'rajesh@gmail.com', '9876500010', 'CUSTOMER');
+('cust_rajesh',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'Rajesh Pawar', 'rajesh@gmail.com', '9876500010', 'CUSTOMER'),
+('admin_super',   '$2a$12$n/0MUkh8n/CpbmVoJJ7q4.ayNgIuj1z0fOoCSGenICVxvMvnLZqm.', 'System Super Administrator', 'admin@agrodairy.com', '9800000000', 'ADMIN');
 
 -- 2. Vendor Record (Nagpur Headquarters)
 INSERT INTO vendors (user_id, vendor_code, business_name, owner_name, phone, email, address, gst_number) VALUES

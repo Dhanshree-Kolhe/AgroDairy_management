@@ -19,6 +19,13 @@ Traditional dairy vendors and doorstep milk distributors face huge operational o
 
 ## ✨ Key Features
 
+### 🛡️ Admin Portal
+- **Executive Dashboard & KPIs**: Real-time dynamically calculated statistics on total platform users, active vendors, active customers, active products, and non-duplicated total revenue.
+- **User Access Control**: Comprehensive user directory with real-time text search and role/status filtering (`ALL`, `ADMIN`, `VENDOR`, `CUSTOMER`, `ACTIVE`, `INACTIVE`).
+- **Account Activation & Security**: One-click Activate / Deactivate account actions with safety confirmations, immediate database updates, self-deactivation protection, and last-admin preservation.
+- **Master Product Catalog**: Read-only directory of standardized dairy products, pricing, units (`LITER`, `KG`, `GRAM`, `PACKET`), and current inventory stock levels.
+- **Live System Health & Diagnostics**: Real-time ping diagnostics for MySQL database connectivity, JDBC query latency (ms), HikariCP pool status, JVM memory usage heap, and repository data verification.
+
 ### 🏢 Vendor Portal
 - **Dashboard & Analytics**: Real-time metrics on total active customers, daily milk volume delivered, pending orders, and total revenue.
 - **Customer Management**: Add, view, update, and manage customer subscriptions and delivery preferences.
@@ -30,9 +37,10 @@ Traditional dairy vendors and doorstep milk distributors face huge operational o
 - **Nagpur Route Planner**: Offline Dijkstra/Nearest-Neighbor route optimizer for shortest delivery paths between customer stops using Haversine formulas.
 
 ### 👤 Customer Portal
-- **Dashboard Overview**: View daily subscription status, morning/evening quantities, current milk rate, and outstanding bill balance.
-- **Delivery History**: Track complete shift-wise delivery records with date and quantity transparency.
-- **Monthly Bills & PDF Download**: Access current and past monthly bill statements and download official PDF invoices directly.
+- **Dashboard Overview**: Modern KPI cards for daily subscription quota, current monthly bill, balance due with quick pay trigger, delivery status, and recent tables.
+- **Monthly Bills & Instant Payment**: View full invoice breakdowns (net payable, paid amount, remaining balance, status badges), filter by status, and settle dues via an intuitive Pay Now interface.
+- **Simulated Demo Payment Gateway**: Safe sandbox flow supporting UPI, Net Banking, Cash, and Store Credit with partial and full payment options and atomic ledger synchronization.
+- **Delivery History & PDF Invoices**: Track complete shift-wise delivery records and download official PDF monthly invoices directly.
 - **Order Extra Products**: Place orders for extra milk or dairy products (Paneer, Curd, Ghee, Butter, Cheese) with unit support.
 - **Holiday Pause Application**: Request delivery pauses before the 10 PM cut-off time for upcoming vacations.
 
@@ -115,7 +123,7 @@ The system follows a strict layered Architecture:
 ## 🚀 How to Build & Run
 
 ### Running Maven Tests
-Execute full integration test suite:
+Execute full integration test suite (41 automated unit & integration tests across 11 test suites):
 ```powershell
 & "C:\Users\Dhanshree\IntelliJ IDEA 2025.3.2\plugins\maven\lib\maven3\bin\mvn.cmd" test
 ```
@@ -136,10 +144,13 @@ The seed data provides pre-configured demo users for testing:
 
 | Role | Username | Default Password | Details |
 | :--- | :--- | :--- | :--- |
+| **Admin** | `admin_super` | `Password123` | System Super Administrator |
 | **Vendor** | `vendor_ramesh` | `Password123` | Ramesh Dairy Owner (Nagpur HQ) |
 | **Customer** | `cust_rahul` | `Password123` | Rahul Verma (Dharampeth, Nagpur) |
 | **Customer** | `cust_sunita` | `Password123` | Sunita Deshmukh (Pratap Nagar, Nagpur) |
 | **Customer** | `cust_mahesh` | `Password123` | Mahesh Patil (Sadar, Nagpur) |
+
+> **Note**: Demo passwords can also be entered as `secret123`. Quick 1-click autofill demo buttons are also provided on the modern login screen.
 
 ---
 
